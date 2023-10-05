@@ -1,92 +1,112 @@
 import 'expo-dev-client';
-import { Button, View, Text } from 'react-native';
-import { styled, useColorScheme } from "nativewind";
-import { LinearGradient } from 'expo-linear-gradient';
-import { StatusBar } from 'expo-status-bar';
-import Animated, { runOnJS, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useState } from 'react';
+import { View, Text, Animated, StyleSheet, Pressable } from 'react-native';
+import { styled, } from "nativewind";
+import { useEffect, useMemo, useState } from 'react';
+import Constants from "expo-constants";
+import * as SplashScreen from "expo-splash-screen";
+import auth from '@react-native-firebase/auth';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import * as WebBrowser from 'expo-web-browser';
 
 
+SplashScreen.preventAutoHideAsync().catch(() => { });
+WebBrowser.maybeCompleteAuthSession();
+const discovery = {
+  authorizationEndpoint: 'https://github.com/login/oauth/authorize',
+  tokenEndpoint: 'https://github.com/login/oauth/access_token',
+  revocationEndpoint: 'https://github.com/settings/connections/applications/Iv1.d9b0c085803e8587',
+}
 const StyledView = styled(View);
-const StyledLinearGradient = styled(LinearGradient);
+
 
 export default function App() {
-  const { colorScheme, toggleColorScheme } = useColorScheme();
 
   return (
-    <StyledView
-      className="flex-1"
-    >
-      <StatusBar hidden />
-      <StyledLinearGradient
-        colors={colorScheme === "dark" ? ["#4B0303", "black"] : ["red", "white"]}
-        end={{ x: 0.17, y: .98 }}
-        className="flex-1"
-      >
-        <FlashCard />
-      </StyledLinearGradient>
-    </StyledView>
+    <AnimatedAppLoader>
+      <StyledView className='flex-1 bg-red-200' >
+      </StyledView>
+    </AnimatedAppLoader>
   );
 }
 
+function AnimatedAppLoader({ children }) {
+  return <AnimatedSplashScreen>{children}</AnimatedSplashScreen>;
+}
 
-const FlashCard = () => {
-  const offset = useSharedValue(0);
-  const [isFlipped, setIsFlipped] = useState(false);
-  const [isHidden, setIsHidden] = useState(false);
+function AnimatedSplashScreen({ children }) {
+  const animation = useMemo(() => new Animated.Value(1), []);
+  const [isAppReady, setAppReady] = useState(false);
+  const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
+  const [user, setUser] = useState();
+  const [request, response, promptAsync] = useAuthRequest({
+    clientId: "Iv1.d9b0c085803e8587",
+    scopes: ["identity"],
+    redirectUri: makeRedirectUri({
+      scheme: "cs-flashcards"
+    })
+  },
+    discovery);
 
-  const flippingStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotateX: offset.value + "deg" }],
-    };
-  });
-
-  const contentStyle = useAnimatedStyle(() => {
-    return {
-      transform: [{ rotateX: 180 + "deg" }],
-    };
-  });
-
-  const handlePress = () => {
-    setIsHidden(true);
-    offset.value = withTiming(offset.value == 0 ? 180 : 0, { duration: 500 }, (isSuccess) => {
-      if (isSuccess) runOnJS(setIsFlipped)(!isFlipped);
-      runOnJS(setIsHidden)(false);
-    });
+  const onAuthStateChanged = async (user) => {
+    setUser(user);
+    if (!isAppReady) {
+      setAppReady(true);
+      await SplashScreen.hideAsync();
+    }
   }
 
+  useEffect(() => {
+    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
+    return () => subscriber();
+  }, []);
+
+  useEffect(() => {
+    console.log(request, response);
+    if (response?.type === "success") {
+      const { code } = response.params;
+      console.log(code);
+    }
+  }, [response]);
+
+  if (!user)
+    return (
+      <StyledView className="flex-1 justify-center items-center">
+        <Pressable onPress={() => promptAsync()}>
+          <Text>Login</Text>
+        </Pressable>
+      </StyledView>
+    );
 
   return (
-    <>
-      <Animated.View
-        style={
-          [{
-            flex: 0.3,
-            backgroundColor: "black",
-            margin: 15,
-            justifyContent: "center",
-            borderWidth: 1,
-            borderColor: "white"
-          }, flippingStyle]
-        }
-      >
-        {
-          !isHidden ?
-            !isFlipped ?
-              <Text style={{ alignSelf: "center", color: "white", fontWeight: "600", fontSize: 25 }}>
-                What is Hamming Code?
-              </Text>
-              :
-              <Animated.Text style={[{ alignSelf: "center", color: "white" }, contentStyle]}>
-                {`int main() {
-                  return 5;
-                }`}
-              </Animated.Text>
-            :
-            null
-        }
-      </Animated.View>
-      <Button onPress={handlePress} title="Flip Card" />
-    </>
+    <View style={{ flex: 1 }}>
+      {isAppReady && children}
+      {!isSplashAnimationComplete && (
+        <Animated.View
+          pointerEvents="none"
+          style={[
+            StyleSheet.absoluteFill,
+            {
+              backgroundColor: Constants.expoConfig.splash.backgroundColor,
+              opacity: animation,
+            },
+          ]}
+        >
+          <Animated.Image
+            style={{
+              width: "100%",
+              height: "100%",
+              resizeMode: Constants.expoConfig.splash.resizeMode || "contain",
+              transform: [
+                {
+                  scale: animation,
+                },
+              ],
+            }}
+            source={require("./assets/splash.png")}
+            fadeDuration={0}
+          />
+        </Animated.View>
+      )}
+    </View>
   );
 }
