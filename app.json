@@ -17,14 +17,6 @@
     "ios": {
       "supportsTablet": true
     },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/splash/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
-      },
-      "package": "com.alghoul.csflashcards",
-      "googleServicesFile": "./google-services.json"
-    },
     "extra": {
       "eas": {
         "projectId": "ebfc1c80-2337-47cf-81a5-66d58db73cf7"
