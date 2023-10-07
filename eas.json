@@ -2,13 +2,13 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal",
-      "env": {
-        "FIREBASE_APP_CHECK_DEBUG_TOKEN": "5D5115CA-7406-4D27-8EC9-2812E551D65D"
-      }
+      "distribution": "internal"
     },
     "preview": {
-      "distribution": "internal"
+      "distribution": "internal",
+      "android": {
+        "buildType": "apk"
+      }
     },
     "production": {}
   }

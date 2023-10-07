@@ -1,34 +1,29 @@
 import 'expo-dev-client';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import * as SplashScreen from "expo-splash-screen";
-import auth from '@react-native-firebase/auth';
 import * as WebBrowser from 'expo-web-browser';
 import AnimatedAppLoader from 'components/AnimatedAppLoader';
-import { Stack } from 'expo-router';
 import { ThemeProvider } from '@react-navigation/native';
 import { Appearance } from 'react-native';
+import { Slot } from 'expo-router';
 
+
+export {
+  ErrorBoundary,
+} from 'expo-router';
 
 SplashScreen.preventAutoHideAsync().catch(() => { });
 WebBrowser.maybeCompleteAuthSession();
 
-export default function Layout() {
-  const [user, setUser] = useState();
-  const onAuthStateChanged = (user) => setUser(user);
-
+export default function RootLayout() {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
   Appearance.addChangeListener((preference) => setColorScheme(preference.colorScheme));
-
-  useEffect(() => {
-    const subscriber = auth().onAuthStateChanged(onAuthStateChanged);
-    return () => subscriber();
-  }, []);
 
 
   return (
     <AnimatedAppLoader>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Stack screenOptions={{ headerShown: false }} />
+        <Slot />
       </ThemeProvider>
     </AnimatedAppLoader>
   );

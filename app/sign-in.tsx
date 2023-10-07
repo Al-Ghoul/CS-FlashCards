@@ -1,29 +1,29 @@
-import { useEffect, useRef } from 'react';
-import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
-import PagerView from 'react-native-pager-view';
-import Constants from 'expo-constants';
-import auth from '@react-native-firebase/auth';
-import { LinearGradient } from 'expo-linear-gradient';
-import { View, Text, Pressable, Appearance } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
-import Animated, { FlipInYLeft, FlipOutYLeft } from 'react-native-reanimated';
 import { AntDesign } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
+import { View, Pressable, Text, Appearance } from 'react-native';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import { useEffect, useRef } from 'react';
+import auth from '@react-native-firebase/auth';
+import LinearGradientView from '@/LinearGradientView';
+import { router } from 'expo-router';
+import Animated, { FlipInYLeft, FlipInYRight, FlipOutYLeft, FlipOutYRight } from 'react-native-reanimated';
+import PagerView from 'react-native-pager-view';
+import * as WebBrowser from 'expo-web-browser';
 
 
-export default function MainScreen() {
+export default function SingInScreen() {
   const colorScheme = Appearance.getColorScheme();
   const { colors } = useTheme();
   const [request, response, promptAsync] = useAuthRequest({
-    clientId: process.env.GITHUB_CLIENT_ID,
+    clientId: process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
     scopes: ["identity"],
     redirectUri: makeRedirectUri({
-      scheme: "cs-flashcards"
+      scheme: "cs-flashcards",
+      path: "sign-in"
     })
   },
     discovery
   );
-
   const getAccessTokenAndSignIn = (userCode) => {
     fetch(
       discovery.tokenEndpoint,
@@ -34,17 +34,19 @@ export default function MainScreen() {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          client_id: process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
-          client_secret: process.env.EXPO_PUBLIC_GITHUB_CLIENT_SECRET,
+          client_id: process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
+          client_secret: process.env.GITHUB_CLIENT_SECRET || process.env.EXPO_PUBLIC_GITHUB_CLIENT_SECRET,
           code: userCode,
-          redirect_uri: "cs-flashcards://"
+          redirect_uri: "cs-flashcards://sign-in"
         })
 
       }).then((response) => {
         return response.json();
-      }).then(async (data) => {
+      }).then((data) => {
         const githubCreds = auth.GithubAuthProvider.credential(data.access_token);
-        const res = await auth().signInWithCredential(githubCreds);
+        auth().signInWithCredential(githubCreds).then(() => {
+          router.replace('/');
+        });
       }).catch((err) => {
         console.log(err);
       });
@@ -57,52 +59,49 @@ export default function MainScreen() {
     }
   }, [response]);
 
-
+  
   return (
-    <LinearGradient
-      colors={[colors.background, colors.primary]}
-      end={{ x: 0.17, y: .98 }}
-      style={{ flex: 1 }}
-    >
-      <PagerViewSlider />
-      <View style={{
-        flexDirection: "row", marginBottom: "auto",
-        justifyContent: "space-around", alignItems: "center",
-        marginTop: 5
-      }}>
-        <Animated.View entering={FlipInYLeft} exiting={FlipOutYLeft}>
-          <Pressable
-            disabled={!request}
-            onPress={() => promptAsync()}
-            style={{
-              flexDirection: "row", backgroundColor: colors.primary,
-              paddingHorizontal: 10, paddingVertical: 2,
-              borderRadius: 7, borderWidth: 0.3, borderColor: colors.border,
-              justifyContent: "center",
-            }}
-          >
-            <AntDesign name="github" size={24} color={colors.border} />
-            <Text
-              style={{ color: colors.text, marginLeft: 5, alignSelf: "center" }}
+    <LinearGradientView>
+      <LinearGradientView>
+        <PagerViewSlider />
+        <View style={{
+          flexDirection: "row", marginBottom: "auto",
+          justifyContent: "space-around", alignItems: "center",
+          marginTop: 5
+        }}>
+          <Animated.View entering={FlipInYLeft} exiting={FlipOutYLeft}>
+            <Pressable
+              disabled={!request}
+              onPress={() => promptAsync()}
+              style={{
+                flexDirection: "row", backgroundColor: colors.primary,
+                paddingHorizontal: 10, paddingVertical: 2,
+                borderRadius: 7, borderWidth: 0.3, borderColor: colors.border,
+                justifyContent: "center", alignSelf: "center", marginTop: "auto", marginBottom: "auto"
+              }}
             >
-              SignIn with Github
-            </Text>
-          </Pressable>
-        </Animated.View>
-        <Animated.View entering={FlipInYLeft} exiting={FlipOutYLeft}>
-          <Pressable
-            style={{
-              backgroundColor: colors.primary, alignItems: "center",
-              borderRadius: 7, padding: 5, justifyContent: "center",
-              borderWidth: 0.5, borderColor: colors.border
-            }}
-            onPress={() => Appearance.setColorScheme(colorScheme === "dark" ? "light" : "dark")}>
-            <Text style={{ color: colors.text, fontWeight: "bold" }}>Toggle theme</Text>
-          </Pressable>
-        </Animated.View>
-
-      </View>
-    </LinearGradient >
+              <AntDesign name="github" size={24} color={colors.border} />
+              <Text
+                style={{ color: colors.text, marginLeft: 5, alignSelf: "center" }}
+              >
+                SignIn with Github
+              </Text>
+            </Pressable>
+          </Animated.View>
+          <Animated.View entering={FlipInYRight} exiting={FlipOutYRight}>
+            <Pressable
+              style={{
+                backgroundColor: colors.primary, alignItems: "center",
+                borderRadius: 7, padding: 5, justifyContent: "center",
+                borderWidth: 0.5, borderColor: colors.border
+              }}
+              onPress={() => Appearance.setColorScheme(colorScheme === "dark" ? "light" : "dark")}>
+              <Text style={{ color: colors.text, fontWeight: "bold" }}>Toggle theme</Text>
+            </Pressable>
+          </Animated.View>
+        </View>
+      </LinearGradientView>
+    </LinearGradientView>
   );
 }
 
@@ -169,5 +168,5 @@ function PagerViewSlider() {
 const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
-  revocationEndpoint: `https://github.com/settings/connections/applications/${Constants.expoConfig.extra.Github.clientId}`,
+  revocationEndpoint: `https://github.com/settings/connections/applications/${process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID}`,
 }
