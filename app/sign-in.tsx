@@ -9,13 +9,14 @@ import { router } from 'expo-router';
 import Animated, { FlipInYLeft, FlipInYRight, FlipOutYLeft, FlipOutYRight } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
 import * as WebBrowser from 'expo-web-browser';
+import Constants from 'expo-constants';
 
 
 export default function SingInScreen() {
   const colorScheme = Appearance.getColorScheme();
   const { colors } = useTheme();
   const [request, response, promptAsync] = useAuthRequest({
-    clientId: process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
+    clientId: Constants.expoConfig.extra.Github.clientId,
     scopes: ["identity"],
     redirectUri: makeRedirectUri({
       scheme: "cs-flashcards",
@@ -34,8 +35,8 @@ export default function SingInScreen() {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          client_id: process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
-          client_secret: process.env.GITHUB_CLIENT_SECRET || process.env.EXPO_PUBLIC_GITHUB_CLIENT_SECRET,
+          client_id: Constants.expoConfig.extra.Github.clientId,
+          client_secret: Constants.expoConfig.extra.Github.clientSecret,
           code: userCode,
           redirect_uri: "cs-flashcards://sign-in"
         })
@@ -59,7 +60,7 @@ export default function SingInScreen() {
     }
   }, [response]);
 
-  
+
   return (
     <LinearGradientView>
       <LinearGradientView>
@@ -168,5 +169,5 @@ function PagerViewSlider() {
 const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
-  revocationEndpoint: `https://github.com/settings/connections/applications/${process.env.GITHUB_CLIENT_ID || process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID}`,
+  revocationEndpoint: `https://github.com/settings/connections/applications/${Constants.expoConfig.extra.Github.clientId}`,
 }
