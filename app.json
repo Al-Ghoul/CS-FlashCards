@@ -4,10 +4,10 @@
     "slug": "CS-FlashCards",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
+    "icon": "./assets/splash/icon.png",
+    "userInterfaceStyle": "automatic",
     "splash": {
-      "image": "./assets/splash.png",
+      "image": "./assets/splash/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -19,23 +19,28 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/splash/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "package": "com.alghoul.csflashcards",
       "googleServicesFile": "./google-services.json"
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
     "extra": {
       "eas": {
         "projectId": "ebfc1c80-2337-47cf-81a5-66d58db73cf7"
+      },
+      "Github": {
+        "clientId": "Iv1.d9b0c085803e8587",
+        "clientSecret": "38ca64d0cc470a972791934223c40b237bb7eab6"
       }
     },
     "scheme": "cs-flashcards",
     "plugins": [
-      "@react-native-firebase/app"
-    ]
+      "@react-native-firebase/app",
+      "expo-router"
+    ],
+    "experiments": {
+      "tsconfigPaths": true
+    }
   }
 }
