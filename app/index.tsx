@@ -15,7 +15,7 @@ export default function MainScreen() {
   const colorScheme = Appearance.getColorScheme();
   const { colors } = useTheme();
   const [request, response, promptAsync] = useAuthRequest({
-    clientId: Constants.expoConfig.extra.Github.clientId,
+    clientId: process.env.GITHUB_CLIENT_ID,
     scopes: ["identity"],
     redirectUri: makeRedirectUri({
       scheme: "cs-flashcards"
@@ -34,8 +34,8 @@ export default function MainScreen() {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          client_id: Constants.expoConfig.extra.Github.clientId,
-          client_secret: Constants.expoConfig.extra.Github.clientSecret,
+          client_id: process.env.EXPO_PUBLIC_GITHUB_CLIENT_ID,
+          client_secret: process.env.EXPO_PUBLIC_GITHUB_CLIENT_SECRET,
           code: userCode,
           redirect_uri: "cs-flashcards://"
         })

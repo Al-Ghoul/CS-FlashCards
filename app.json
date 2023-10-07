@@ -28,10 +28,6 @@
     "extra": {
       "eas": {
         "projectId": "ebfc1c80-2337-47cf-81a5-66d58db73cf7"
-      },
-      "Github": {
-        "clientId": "Iv1.d9b0c085803e8587",
-        "clientSecret": "38ca64d0cc470a972791934223c40b237bb7eab6"
       }
     },
     "scheme": "cs-flashcards",
