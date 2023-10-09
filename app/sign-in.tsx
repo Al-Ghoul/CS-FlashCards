@@ -2,9 +2,9 @@ import { AntDesign } from '@expo/vector-icons';
 import { useTheme } from '@react-navigation/native';
 import { View, Pressable, Text, Appearance } from 'react-native';
 import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
-import { useEffect, useRef } from 'react';
+import { createRef, useEffect } from 'react';
 import auth from '@react-native-firebase/auth';
-import LinearGradientView from '@/LinearGradientView';
+import LinearGradientView from '@/components/LinearGradientView';
 import { router } from 'expo-router';
 import Animated, { FlipInYLeft, FlipInYRight, FlipOutYLeft, FlipOutYRight } from 'react-native-reanimated';
 import PagerView from 'react-native-pager-view';
@@ -16,7 +16,7 @@ export default function SingInScreen() {
   const colorScheme = Appearance.getColorScheme();
   const { colors } = useTheme();
   const [request, response, promptAsync] = useAuthRequest({
-    clientId: Constants.expoConfig.extra.Github.clientId,
+    clientId: Constants.expoConfig?.extra?.Github.clientId,
     scopes: ["identity"],
     redirectUri: makeRedirectUri({
       scheme: "cs-flashcards",
@@ -25,7 +25,7 @@ export default function SingInScreen() {
   },
     discovery
   );
-  const getAccessTokenAndSignIn = (userCode) => {
+  const getAccessTokenAndSignIn = (userCode: string) => {
     fetch(
       discovery.tokenEndpoint,
       {
@@ -35,8 +35,8 @@ export default function SingInScreen() {
           "Accept": "application/json"
         },
         body: JSON.stringify({
-          client_id: Constants.expoConfig.extra.Github.clientId,
-          client_secret: Constants.expoConfig.extra.Github.clientSecret,
+          client_id: Constants.expoConfig?.extra?.Github.clientId,
+          client_secret: Constants.expoConfig?.extra?.Github.clientSecret,
           code: userCode,
           redirect_uri: "cs-flashcards://sign-in"
         })
@@ -108,7 +108,7 @@ export default function SingInScreen() {
 
 
 function PagerViewSlider() {
-  const pageViewerRef = useRef<PagerView>();
+  const pageViewerRef = createRef<PagerView>();
   const { colors } = useTheme();
 
   useEffect(() => {
@@ -169,5 +169,5 @@ function PagerViewSlider() {
 const discovery = {
   authorizationEndpoint: 'https://github.com/login/oauth/authorize',
   tokenEndpoint: 'https://github.com/login/oauth/access_token',
-  revocationEndpoint: `https://github.com/settings/connections/applications/${Constants.expoConfig.extra.Github.clientId}`,
+  revocationEndpoint: `https://github.com/settings/connections/applications/${Constants.expoConfig?.extra?.Github.clientId}`,
 }

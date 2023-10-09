@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import AnimatedSplashScreen from "./AnimatedSplashScreen";
 
 
-export default function AnimatedAppLoader({ children }) {
+export default function AnimatedAppLoader({ children }: Props) {
   const [isSplashReady, setSplashReady] = useState(false);
 
   useEffect(() => {
@@ -18,4 +18,8 @@ export default function AnimatedAppLoader({ children }) {
       {children}
     </AnimatedSplashScreen>
   );
+}
+
+type Props = {
+  children: React.ReactNode
 }

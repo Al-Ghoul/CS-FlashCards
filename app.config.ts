@@ -8,7 +8,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
   android: {
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     adaptiveIcon: {
-      foregroundImage: "./assets/splash/adaptive-icon.png",
+      foregroundImage: "./src/assets/splash/adaptive-icon.png",
       backgroundColor: "#ffffff"
     },
     package: "com.alghoul.csflashcards",

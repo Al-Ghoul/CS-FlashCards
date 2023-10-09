@@ -5,7 +5,7 @@ import { StyleSheet } from 'react-native';
 import Constants from 'expo-constants';
 
 
-export default function AnimatedSplashScreen({ children }) {
+export default function AnimatedSplashScreen({ children }: Props) {
   const fadeValue = useSharedValue(1);
   const [isSplashAnimationComplete, setAnimationComplete] = useState(false);
 
@@ -27,7 +27,7 @@ export default function AnimatedSplashScreen({ children }) {
             style={[
               StyleSheet.absoluteFill,
               {
-                backgroundColor: Constants.expoConfig.splash.backgroundColor,
+                backgroundColor: Constants.expoConfig?.splash?.backgroundColor,
                 opacity: fadeValue,
               },
             ]}
@@ -36,13 +36,13 @@ export default function AnimatedSplashScreen({ children }) {
               style={{
                 width: "100%",
                 height: "100%",
-                resizeMode: Constants.expoConfig.splash.resizeMode || "contain",
+                resizeMode: Constants.expoConfig?.splash?.resizeMode || "contain",
                 transform: [
                   {
                     scale: fadeValue,
                   },
                 ],
-              }} source={require("assets/splash/splash.png")}
+              }} source={require("@/assets/splash/splash.png")}
               fadeDuration={0}
             >
             </Animated.Image>
@@ -51,4 +51,8 @@ export default function AnimatedSplashScreen({ children }) {
       }
     </>
   );
+}
+
+type Props = {
+  children: React.ReactNode
 }

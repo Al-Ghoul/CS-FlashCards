@@ -2,10 +2,11 @@ import 'expo-dev-client';
 import { useState } from 'react';
 import * as SplashScreen from "expo-splash-screen";
 import * as WebBrowser from 'expo-web-browser';
-import AnimatedAppLoader from 'components/AnimatedAppLoader';
+import AnimatedAppLoader from '@/components/AnimatedAppLoader';
 import { ThemeProvider } from '@react-navigation/native';
 import { Appearance } from 'react-native';
 import { Slot } from 'expo-router';
+import { RecoilRoot } from 'recoil';
 
 
 export {
@@ -23,7 +24,9 @@ export default function RootLayout() {
   return (
     <AnimatedAppLoader>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
-        <Slot />
+        <RecoilRoot>
+          <Slot />
+        </RecoilRoot>
       </ThemeProvider>
     </AnimatedAppLoader>
   );

@@ -2,7 +2,7 @@ import { useTheme } from '@react-navigation/native';
 import { LinearGradient } from 'expo-linear-gradient';
 
 
-export default function LinearGradientView({ children }) {
+export default function LinearGradientView({ children }: Props) {
   const { colors } = useTheme();
 
   return (
@@ -14,4 +14,8 @@ export default function LinearGradientView({ children }) {
       {children}
     </LinearGradient>
   );
+}
+
+type Props = {
+  children: React.ReactNode
 }
