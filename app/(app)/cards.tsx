@@ -174,7 +174,7 @@ export default function Cards() {
             </View>
 
             <Button
-              style={{ backgroundColor: colors.primary, width: "50%", alignSelf: "center" }}
+              style={{ backgroundColor: colors.primary, width: "50%", alignSelf: "center", borderWidth: 1, borderColor: colors.border }}
               textColor={colors.text}
               onPress={() => {
                 setIsSettingsShown(!isSettingsShown);
@@ -192,7 +192,7 @@ export default function Cards() {
 
         {isLoading ? <ActivityIndicator size="small" style={{ marginVertical: 20 }} color={colors.text} /> : null}
         {!cardsData.length && !isLoading ?
-          <Text style={{ alignSelf: "center", color: colors.text, marginTop: 30, fontWeight: "bold" }}>No Cards with this setting were found.</Text> :
+          <Text style={{ alignSelf: "center", color: colors.text, marginTop: 30, fontWeight: "bold" }}>No Cards were found with this setting.</Text> :
           <FlatList
             contentContainerStyle={{ gap: 15, marginTop: 30 }}
             data={cardsData}

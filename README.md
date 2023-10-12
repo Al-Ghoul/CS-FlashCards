@@ -26,6 +26,7 @@ npx expo run:ios
 Consult expo's [Prebuild](https://docs.expo.dev/workflow/prebuild/) docs for more information.
 
 2. Expo's EAS build, which builds the app on expo's managed hosts (it can actually build both IOS and Android apps):
+
 for a specific platform you can run
 ```sh
 # Build Android
@@ -34,6 +35,7 @@ eas build --platform android
 # Build IOS
 eas build --platform ios
 ```
+or for all platforms
 ```sh
 # Build for both Andoid & IOS
 eas build --platform all

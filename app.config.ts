@@ -9,7 +9,7 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     googleServicesFile: process.env.GOOGLE_SERVICES_JSON,
     adaptiveIcon: {
       foregroundImage: "./src/assets/splash/adaptive-icon.png",
-      backgroundColor: "#ffffff"
+      backgroundColor: "#000000"
     },
     package: "com.alghoul.csflashcards",
   },
