@@ -40,3 +40,4 @@ android/
 .env
 
 google-services.json
+firestore/serviceAccountKey.json
