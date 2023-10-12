@@ -1,7 +1,7 @@
 import { Pressable, View, Text } from "react-native";
 import { useTheme } from '@react-navigation/native';
 import LinearGradientView from "@/components/LinearGradientView";
-import { useNavigation } from 'expo-router';
+import { Link, useNavigation } from 'expo-router';
 import { Entypo, Ionicons } from '@expo/vector-icons';
 import { Button } from "react-native-paper";
 import { useState } from "react";
@@ -32,12 +32,14 @@ export default function MainScreen() {
             <Entypo name="circle-with-plus" size={24} color={colors.border} />
             <Text style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}>Add a card</Text>
           </Pressable>
-          <Pressable
-            style={{ flexDirection: "row", alignItems: "center" }}
-            onPress={() => console.log("To be added")}>
-            <Ionicons name="card" size={24} color={colors.border} />
-            <Text style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}>Browse Cards</Text>
-          </Pressable>
+          <Link href="/cards" asChild>
+            <Pressable
+              style={{ flexDirection: "row", alignItems: "center" }}
+            >
+              <Ionicons name="card" size={24} color={colors.border} />
+              <Text style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}>Browse Cards</Text>
+            </Pressable>
+          </Link>
         </View>
       </View>
     </LinearGradientView>

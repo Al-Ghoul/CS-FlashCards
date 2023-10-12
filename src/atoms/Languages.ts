@@ -1,4 +1,4 @@
-import { atom } from "recoil";
+import { atom, selector } from "recoil";
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from "react-native";
 
@@ -21,4 +21,10 @@ export const Languages = atom({
       return () => subscriber();
     }
   ]
+});
+
+
+export const LanguageFilter = atom({
+  key: 'LanguageFilter',
+  default: {} as SelectableItem,
 });

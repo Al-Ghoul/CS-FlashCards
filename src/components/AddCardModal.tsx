@@ -1,21 +1,21 @@
 import { Modal, View, Text, Pressable, TextInput, Alert } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardInputSchema, CardInputSchemaType } from '@/utils/validators';
 import { ActivityIndicator, Button, Checkbox } from 'react-native-paper';
-import { useRecoilValue, useSetRecoilState } from "recoil";
-import { Languages } from "@/atoms/Languages";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { LanguageFilter, Languages } from "@/atoms/Languages";
 import { Picker } from '@react-native-picker/picker';
 import { useEffect, useState } from 'react';
-import { Entypo, MaterialCommunityIcons } from '@expo/vector-icons';
+import { Entypo, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import AddTopicModal from './AddTopicModal';
 import { FilteredTopicsTranslationState, TopicsTranslationFilterState } from '@/atoms/TopicsTranslations';
 import firestore from '@react-native-firebase/firestore';
 import * as Crypto from 'expo-crypto';
 import Toast from 'react-native-simple-toast';
 import auth from "@react-native-firebase/auth";
+
 
 export default function AddCardModal({ isVisible, onClose }: Props) {
   const { colors } = useTheme();
@@ -29,12 +29,12 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
   } = useForm<CardInputSchemaType>({
     resolver: zodResolver(CardInputSchema),
   });
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectableItem>();
+  const [selectedLanguage, setSelectedLanguage] = useRecoilState(LanguageFilter);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const onModalClose = () => {
     setIsModalVisible(false);
   };
-  const [selectedTopicTranslation, setSelectedTopicTranslation] = useState<SelectableTopicTranslation>();
+  const [selectedTopicTranslation, setSelectedTopicTranslation] = useState<SelectableTopicTranslation>(topicsTranslations[0]);
   const setFilter = useSetRecoilState(TopicsTranslationFilterState);
   const currentUser = auth().currentUser;
   const [isAddingCard, setIsAddingCard] = useState(false);
@@ -96,7 +96,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
               )}
               name="cover"
             />
-            {errors.cover && <Text style={{color: colors.text, alignSelf: "center"}}>{errors.cover.message}</Text>}
+            {errors.cover && <Text style={{ color: colors.text, alignSelf: "center" }}>{errors.cover.message}</Text>}
 
             <Controller
               control={control}
@@ -114,7 +114,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
               )}
               name="content"
             />
-            {errors.content && <Text style={{color: colors.text, alignSelf: "center"}}>{errors.content.message}</Text>}
+            {errors.content && <Text style={{ color: colors.text, alignSelf: "center" }}>{errors.content.message}</Text>}
 
             <View>
               <Picker
@@ -177,7 +177,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
               )}
               name="public"
             />
-            {errors.public && <Text style={{color: colors.text, alignSelf: "center"}}>{errors.public.message}</Text>}
+            {errors.public && <Text style={{ color: colors.text, alignSelf: "center" }}>{errors.public.message}</Text>}
 
             <View>
               <Button
@@ -192,7 +192,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                       } else {
                         const randomUUID = Crypto.randomUUID();
                         cardsCollection.doc()
-                          .set({ id: randomUUID, ...data, public: !!data.public, userId: currentUser?.uid, languageId: selectedLanguage?.id, mainTopicId: selectedTopicTranslation?.value.mainTopicId })
+                          .set({ id: randomUUID, ...data, public: !!data.public, userId: currentUser?.uid, languageId: selectedLanguage?.id, mainTopicId: selectedTopicTranslation?.value.mainTopicId, createdAt: new Date() })
                           .then(() => {
                             Toast.show(`${data.cover} was added successfully!`, Toast.LONG);
                           })

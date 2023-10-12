@@ -34,3 +34,13 @@ type TopicTranslationType = {
   mainTopicId: string,
   languageId: string,
 }
+
+type CardType = {
+  id: string,
+  cover: string,
+  content: string,
+  public: boolean
+  languageId: string,
+  mainTopicId: string,
+  userId: string
+}

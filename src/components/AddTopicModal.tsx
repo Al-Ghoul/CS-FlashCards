@@ -1,15 +1,14 @@
 import { Modal, View, Text, Pressable, TextInput, StyleSheet, Alert } from 'react-native';
-import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useTheme } from '@react-navigation/native';
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MainTopicInputSchema, MainTopicInputSchemaType, MainTopicTranslationInputSchema, MainTopicTranslationInputSchemaType } from '@/utils/validators';
+import { MainTopicInputSchema, MainTopicTranslationInputSchema, MainTopicTranslationInputSchemaType } from '@/utils/validators';
 import { Button } from 'react-native-paper';
-import { useRecoilValue } from "recoil";
-import { Languages } from "@/atoms/Languages";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { LanguageFilter, Languages } from "@/atoms/Languages";
 import { Picker } from '@react-native-picker/picker';
 import { useEffect, useState } from 'react';
-import { Entypo, AntDesign } from '@expo/vector-icons';
+import { Entypo, AntDesign, MaterialIcons } from '@expo/vector-icons';
 import { Topics } from '@/atoms/Topics';
 import * as Crypto from 'expo-crypto';
 import firestore from '@react-native-firebase/firestore';
@@ -35,8 +34,8 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
   } = useForm<MainTopicTranslationInputSchemaType>({
     resolver: zodResolver(MainTopicTranslationInputSchema),
   });
-  const [selectedLanguage, setSelectedLanguage] = useState<SelectableItem>();
-  const [selectedTopic, setSelectedTopic] = useState<SelectableItem>();
+  const [selectedLanguage, setSelectedLanguage] = useRecoilState(LanguageFilter);
+  const [selectedTopic, setSelectedTopic] = useState<SelectableItem>(topics[0]);
   const [isAddingTopic, setIsAddingTopic] = useState(false);
   const [isAddingTopicTranslation, setIsAddingTopicTranslation] = useState(false);
 
