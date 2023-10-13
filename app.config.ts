@@ -21,5 +21,11 @@ export default ({ config }: ConfigContext): ExpoConfig => ({
     eas: {
       projectId: "ebfc1c80-2337-47cf-81a5-66d58db73cf7"
     }
+  },
+  updates: {
+    url: "https://u.expo.dev/ebfc1c80-2337-47cf-81a5-66d58db73cf7"
+  },
+  runtimeVersion: {
+    policy: "appVersion"
   }
 });

@@ -26,5 +26,5 @@ export const Languages = atom({
 
 export const LanguageFilter = atom({
   key: 'LanguageFilter',
-  default: {} as SelectableItem,
+  default: undefined as unknown as SelectableItem,
 });

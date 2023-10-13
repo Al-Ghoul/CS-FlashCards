@@ -108,8 +108,9 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                   placeholder="Content"
                   onBlur={onBlur}
                   onChangeText={onChange}
+                  multiline
                   value={value}
-                  style={{ height: 40, borderRadius: 5, borderWidth: 1, backgroundColor: "white", padding: 10 }}
+                  style={{ minHeight: 40, borderRadius: 5, borderWidth: 1, backgroundColor: "white", padding: 10 }}
                 />
               )}
               name="content"
@@ -189,7 +190,8 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                     .then(res => {
                       if (!!res.data().count) {
                         Toast.show(`${data.cover} already exists!`, Toast.LONG);
-                      } else {
+                      }
+                      else {
                         const randomUUID = Crypto.randomUUID();
                         cardsCollection.doc()
                           .set({ id: randomUUID, ...data, public: !!data.public, userId: currentUser?.uid, languageId: selectedLanguage?.id, mainTopicId: selectedTopicTranslation?.value.mainTopicId, createdAt: new Date() })
