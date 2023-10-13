@@ -278,10 +278,10 @@ function CardsModal({
           <FlashCard
             card={cards[cardIndex]}
             style={{
-              backgroundColor: "black",
+              backgroundColor: colors.primary,
               justifyContent: "center",
               borderWidth: 1,
-              borderColor: "white",
+              borderColor: colors.border,
               alignSelf: "center",
               width: "90%",
               margin: 15,
@@ -356,7 +356,7 @@ const FlashCard = ({
         {
           !isHidden ?
             !isFlipped ?
-              <Text style={{ alignSelf: "center", color: "white", fontWeight: "600", fontSize: 25, margin: 3, padding: 5 }}>
+              <Text style={{ alignSelf: "center", color: colors.text, fontWeight: "600", fontSize: 25, margin: 3, padding: 5 }}>
                 {card.cover}
               </Text>
               :
