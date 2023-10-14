@@ -37,13 +37,14 @@ export default function Cards() {
     setIsModalVisible(false);
   };
   const [cardIndex, setCardIndex] = useState(0);
+  const changedFlag = useRef(false);
 
   useEffect(() => {
     if (!selectedLanguage) setSelectedLanguage(languages[0]);
   }, [languages])
 
   useEffect(() => {
-    setSelectedTopicTranslation(topicsTranslations[0]);
+    if (!selectedLanguage) setSelectedTopicTranslation(topicsTranslations[0]);
     setMaxReached(false);
   }, [topicsTranslations]);
 
@@ -89,7 +90,12 @@ export default function Cards() {
 
         if (temproraryList.length) {
           temproraryList.reverse();
-          setCardsData((currentList) => [...currentList, ...temproraryList]);
+          if (changedFlag.current === true) {
+            changedFlag.current = false;
+            setCardsData(temproraryList);
+          }
+          else
+            setCardsData((currentList) => [...currentList, ...temproraryList]);
         }
 
         listRef.current?.scrollToEnd();
@@ -181,7 +187,7 @@ export default function Cards() {
                 offset.value = withTiming(offset.value == 0 ? -180 : 0, { duration: 500 });
                 setMaxReached(false);
                 setLastDocument(undefined);
-                setCardsData([]);
+                changedFlag.current = true;
                 handleDataFetch();
               }}
             >

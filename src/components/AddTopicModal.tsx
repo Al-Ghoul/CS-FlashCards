@@ -44,7 +44,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
   }, [languages]);
 
   useEffect(() => {
-    if (!selectedTopic) setSelectedTopic(topics[0]);
+    setSelectedTopic(topics[0]);
   }, [topics]);
 
 
