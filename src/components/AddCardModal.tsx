@@ -137,7 +137,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
 
             <View>
               <Picker
-                selectedValue={selectedLanguage}
+                selectedValue={selectedTopicTranslation}
                 onValueChange={(itemValue) =>
                   setSelectedTopicTranslation(itemValue as unknown as SelectableTopicTranslation)
                 }

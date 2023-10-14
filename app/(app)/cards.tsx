@@ -148,7 +148,7 @@ export default function Cards() {
             </View>
             <View style={{ marginVertical: 30 }}>
               <Picker
-                selectedValue={selectedLanguage}
+                selectedValue={selectedTopicTranslation}
                 onValueChange={(itemValue) =>
                   setSelectedTopicTranslation(itemValue as unknown as SelectableTopicTranslation)
                 }
