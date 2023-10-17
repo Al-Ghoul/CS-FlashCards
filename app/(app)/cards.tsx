@@ -44,7 +44,7 @@ export default function Cards() {
   }, [languages])
 
   useEffect(() => {
-    if (!selectedLanguage) setSelectedTopicTranslation(topicsTranslations[0]);
+    setSelectedTopicTranslation(topicsTranslations[0]);
     setMaxReached(false);
   }, [topicsTranslations]);
 
