@@ -1,38 +1,34 @@
-import 'expo-dev-client';
-import { useState } from 'react';
+import "expo-dev-client";
+import { useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import * as WebBrowser from 'expo-web-browser';
-import AnimatedAppLoader from '@/components/AnimatedAppLoader';
-import { ThemeProvider } from '@react-navigation/native';
-import { Appearance } from 'react-native';
-import { Slot } from 'expo-router';
-import { RecoilRoot } from 'recoil';
+import * as WebBrowser from "expo-web-browser";
+import AnimatedAppLoader from "@/components/AnimatedAppLoader";
+import { ThemeProvider } from "@react-navigation/native";
+import { Appearance } from "react-native";
+import { Slot } from "expo-router";
+import { RecoilRoot } from "recoil";
 
+export { ErrorBoundary } from "expo-router";
 
-export {
-  ErrorBoundary,
-} from 'expo-router';
-
-SplashScreen.preventAutoHideAsync().catch(() => { });
+SplashScreen.preventAutoHideAsync().catch(() => {});
 WebBrowser.maybeCompleteAuthSession();
 
 export default function RootLayout() {
   const [colorScheme, setColorScheme] = useState(Appearance.getColorScheme());
-  Appearance.addChangeListener((preference) => setColorScheme(preference.colorScheme));
-
+  Appearance.addChangeListener((preference) =>
+    setColorScheme(preference.colorScheme),
+  );
 
   return (
     <AnimatedAppLoader>
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <RecoilRoot>
-          <Slot />
+            <Slot />
         </RecoilRoot>
       </ThemeProvider>
     </AnimatedAppLoader>
   );
 }
-
-
 
 const DarkTheme = {
   dark: true,
@@ -42,9 +38,9 @@ const DarkTheme = {
     card: "rgb(255, 255, 255)",
     text: "white",
     border: "white",
-    notification: "rgb(255, 69, 58)"
-  }
-}
+    notification: "rgb(255, 69, 58)",
+  },
+};
 
 const DefaultTheme = {
   dark: false,
@@ -54,6 +50,7 @@ const DefaultTheme = {
     card: "rgb(255, 255, 255)",
     text: "black",
     border: "black",
-    notification: "rgb(255, 69, 58)"
-  }
-}
+    notification: "rgb(255, 69, 58)",
+  },
+};
+

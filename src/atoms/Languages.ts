@@ -1,4 +1,4 @@
-import { atom, selector } from "recoil";
+import { atom } from "recoil";
 import firestore from '@react-native-firebase/firestore';
 import { Alert } from "react-native";
 

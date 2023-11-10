@@ -98,6 +98,7 @@ MAIN-TOPIC {
 }
 
 TOPIC-TRANSLATION {
+	string id
 	string name
 	string mainTopicId
 	string languageId

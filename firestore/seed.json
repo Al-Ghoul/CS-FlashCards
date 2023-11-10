@@ -10,5 +10,41 @@
       "fullName": "العربية",
       "id": "mNK6WG4OQFXw0FFvS67Q"
     }
+  },
+  "topics": {
+    "62b60d91-a47a-4c2c-8d0e-f386a511160d": {
+      "id": "62b60d91-a47a-4c2c-8d0e-f386a511160d",
+      "name": "software engineering principles"
+    },
+    "95849f03-f3c2-46e0-aa4e-3c7e94499a82": {
+      "id": "95849f03-f3c2-46e0-aa4e-3c7e94499a82",
+      "name": "datastructure"
+    }
+  },
+  "topic_translations": {
+    "TH9cuVEt8AHxrHUkXwUD": {
+      "id": "TH9cuVEt8AHxrHUkXwUD",
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "topicId": "62b60d91-a47a-4c2c-8d0e-f386a511160d",
+      "name": "Software Engineering Principles"
+    },
+    "MVWm4pjh57DUmzLhvvp2": {
+      "id": "mNK6WG4OQFXw0FFvS67Q",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "topicId": "95849f03-f3c2-46e0-aa4e-3c7e94499a82",
+      "name": "هيكلة البيانات"
+    },
+    "9bDwzvp06gB4zzHsAGHB": {
+      "id": "9bDwzvp06gB4zzHsAGHB",
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "topicId": "95849f03-f3c2-46e0-aa4e-3c7e94499a82",
+      "name": "Data Structures"
+    },
+    "8NH4J1xbXHUNR3YvF8nC": {
+      "id": "8NH4J1xbXHUNR3YvF8nC",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "topicId": "62b60d91-a47a-4c2c-8d0e-f386a511160d",
+      "name": "مبادئ هندسة البرمجيات"
+    }
   }
 }
