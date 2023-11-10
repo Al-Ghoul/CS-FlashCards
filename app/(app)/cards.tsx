@@ -481,7 +481,8 @@ const FlashCard = ({
       <Button
         disabled={isAdding}
         mode="contained"
-        buttonColor={colors.text}
+        textColor={colors.text}
+        buttonColor={colors.primary}
         onPress={async () => {
           setIsAdding(true);
           const knownCardsCollection = firestore().collection("known_cards");
