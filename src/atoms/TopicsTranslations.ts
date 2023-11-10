@@ -17,9 +17,9 @@ export const TranslatedTopics = atom({
                 const { id, name, languageId, topicId } = topic.data();
                 return {
                   label: name,
-                  value: id,
+                  value: topicId,
                   id,
-                  data: { languageId, mainTopicId: topicId },
+                  languageId,
                 };
               },
               () => {
@@ -48,9 +48,7 @@ export const FilteredTranslatedTopics = selector({
       (language) => language.value === filter.value,
     )[0];
 
-    return topics.filter(
-      (topic) => topic.data.languageId === selectedLanguage?.id,
-    );
+    return topics.filter((topic) => topic.languageId === selectedLanguage?.id);
   },
 });
 

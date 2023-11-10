@@ -23,10 +23,7 @@ type SelectableTranslatedTopic = {
   id: string;
   label: string;
   value: string;
-  data: {
-    languageId: string;
-    mainTopicId: string;
-  };
+  languageId: string
 };
 
 type MainTopicType = {
