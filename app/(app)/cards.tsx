@@ -33,6 +33,8 @@ import Animated, {
 } from "react-native-reanimated";
 import { LanguageDropDown } from "@/components/LanguageDropDown";
 import { TranslatedTopicsDropDown } from "@/components/TranslatedTopicsDropDown";
+import { alert } from "@baronha/ting";
+import { KnownCards } from "@/atoms/KnownCards";
 
 export default function Cards() {
   const { colors } = useTheme();
@@ -47,6 +49,7 @@ export default function Cards() {
   const [selectedTranslatedTopics, setSelectedTranslatedTopics] =
     useState<Array<string>>();
   const selectedLanguage = useRecoilValue(LanguageFilter);
+  const userKnownCards = useRecoilValue(KnownCards);
   const [isPublic, setIsPublic] = useState(false);
   const currentUser = auth().currentUser;
   const [isSettingsShown, setIsSettingsShown] = useState(true);
@@ -60,7 +63,7 @@ export default function Cards() {
 
   useEffect(() => {
     setCardsData([]);
-  }, [selectedTranslatedTopics]);
+  }, [selectedTranslatedTopics, selectedLanguage]);
 
   useEffect(() => {
     setCardIndex(cardsData.length - 1);
@@ -83,16 +86,18 @@ export default function Cards() {
     setIsLoading(true);
     let query = isPublic
       ? cardsCollectionRef.current
+          .where("languageId", "==", selectedLanguage.id)
           .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
           .where("public", "==", isPublic)
           .orderBy("createdAt")
       : cardsCollectionRef.current
+          .where("languageId", "==", selectedLanguage.id)
           .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
           .where("userId", "==", currentUser?.uid)
           .orderBy("createdAt");
     if (lastDocument !== undefined) query = query.endBefore(lastDocument);
 
-    const temproraryList: Array<CardType> = [];
+    let temporaryList: Array<CardType> = [];
     query
       .limitToLast(QueryLimit)
       .get()
@@ -107,7 +112,7 @@ export default function Cards() {
               setMaxReached(true);
               return;
             }
-            temproraryList.push(card.data() as CardType);
+            temporaryList.push(card.data() as CardType);
           },
           (e: any) => {
             console.log(e);
@@ -117,13 +122,19 @@ export default function Cards() {
           },
         );
 
-        if (temproraryList.length) {
-          temproraryList.reverse();
+        for (const cardData of userKnownCards) {
+          temporaryList = temporaryList.filter(
+            (card) => card.id !== cardData.cardId,
+          );
+        }
+
+        if (temporaryList.length) {
+          temporaryList.reverse();
           if (changedFlag.current === true) {
             changedFlag.current = false;
-            setCardsData(temproraryList);
+            setCardsData(temporaryList);
           } else
-            setCardsData((currentList) => [...currentList, ...temproraryList]);
+            setCardsData((currentList) => [...currentList, ...temporaryList]);
         }
 
         listRef.current?.scrollToEnd();
@@ -391,6 +402,7 @@ const FlashCard = ({
   const offset = useSharedValue(0);
   const [isFlipped, setIsFlipped] = useState(false);
   const [isHidden, setIsHidden] = useState(false);
+  const [isAdding, setIsAdding] = useState(false);
 
   useEffect(() => {
     if (offset.value === 180) {
@@ -466,6 +478,40 @@ const FlashCard = ({
         <Fontisto name="arrow-swap" size={24} color={colors.text} />
         <Text style={{ color: colors.text }}>Flip Card</Text>
       </Pressable>
+      <Button
+        disabled={isAdding}
+        mode="contained"
+        buttonColor={colors.text}
+        onPress={async () => {
+          setIsAdding(true);
+          const knownCardsCollection = firestore().collection("known_cards");
+          const currentUser = auth().currentUser;
+          const cardsCount = await knownCardsCollection
+            .where("userId", "==", currentUser?.uid)
+            .where("cardId", "==", card.id)
+            .countFromServer()
+            .get();
+          if (!!cardsCount.data().count) {
+            alert({
+              preset: "error",
+              message: "Card already exists in your known list",
+            });
+            setIsAdding(false);
+            return;
+          } else {
+            await knownCardsCollection.add({
+              userId: currentUser?.uid,
+              cardId: card.id,
+            });
+            alert({
+              message: "Card was added to the known list successfully",
+            });
+            setIsAdding(false);
+          }
+        }}
+      >
+        I Know it
+      </Button>
     </View>
   );
 };

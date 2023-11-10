@@ -215,7 +215,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                       if (!!res.data().count) {
                         alert({
                           preset: "error",
-                          message: `${data.cover} already exists!`,
+                          message: "Card already exists!",
                         });
                       } else {
                         const randomUUID = Crypto.randomUUID();
@@ -232,8 +232,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                           })
                           .then(() => {
                             alert({
-                              preset: "done",
-                              message: `${data.cover} was added successfully!`,
+                              message: "Card was added successfully!",
                             });
                           })
                           .catch((e) =>
