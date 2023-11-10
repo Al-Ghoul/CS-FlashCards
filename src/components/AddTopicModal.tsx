@@ -291,6 +291,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                 disabled={isAddingTopicTranslation}
                 onPress={handleTopicTranslationSubmit((data) => {
                   setIsAddingTopicTranslation(true);
+                  const randomUUID = Crypto.randomUUID();
                   const topicTranslationsCollection =
                     firestore().collection("topic_translations");
                   topicTranslationsCollection
@@ -307,13 +308,17 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                         topicTranslationsCollection
                           .doc()
                           .set({
+                            id: randomUUID,
                             ...data,
-                            mainTopicId: selectedTopic?.id,
+                            TopicId: selectedTopic?.id,
                             languageId: selectedLanguage?.id,
                           })
                           .then(() => {
                             setIsAddingTopic(false);
-                            alert({ message: "Topic's Translation was added successfully"});
+                            alert({
+                              message:
+                                "Topic's Translation was added successfully",
+                            });
                           })
                           .catch((e) =>
                             Alert.alert(
