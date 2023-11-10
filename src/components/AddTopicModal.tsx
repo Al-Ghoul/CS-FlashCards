@@ -133,7 +133,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                     if (!!res.data().count) {
                       alert({
                         preset: "error",
-                        message: "Card already exists",
+                        message: "Topic already exists",
                       });
                     } else {
                       const randomUUID = Crypto.randomUUID();
@@ -142,7 +142,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                         .set({ ...data, id: randomUUID })
                         .then(() => {
                           alert({
-                            message: "Card was added successfully!",
+                            message: "Topic was added successfully!",
                           });
                         })
                         .catch((e) =>
@@ -301,7 +301,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                       if (!!res.data().count) {
                         alert({
                           preset: "error",
-                          message: "Card already exists!",
+                          message: "Topic's translation already exists!",
                         });
                       } else {
                         topicTranslationsCollection
@@ -313,7 +313,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                           })
                           .then(() => {
                             setIsAddingTopic(false);
-                            alert({ message: "Card was added successfully"});
+                            alert({ message: "Topic's Translation was added successfully"});
                           })
                           .catch((e) =>
                             Alert.alert(
