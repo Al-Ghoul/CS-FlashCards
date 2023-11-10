@@ -1,11 +1,10 @@
 import { Pressable, View, Text } from "react-native";
-import { useTheme } from '@react-navigation/native';
+import { useTheme } from "@react-navigation/native";
 import LinearGradientView from "@/components/LinearGradientView";
-import { Link } from 'expo-router';
-import { Entypo, Ionicons } from '@expo/vector-icons';
+import { Link } from "expo-router";
+import { Entypo, Ionicons } from "@expo/vector-icons";
 import { useState } from "react";
 import AddCardModal from "@/components/AddCardModal";
-
 
 export default function MainScreen() {
   const { colors } = useTheme();
@@ -14,24 +13,36 @@ export default function MainScreen() {
     setIsModalVisible(false);
   };
 
-
   return (
     <LinearGradientView>
       <AddCardModal isVisible={isModalVisible} onClose={onModalClose} />
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <View style={{ width: "100%", flexDirection: "row", justifyContent: "space-around" }}>
+        <View
+          style={{
+            width: "100%",
+            flexDirection: "row",
+            justifyContent: "space-around",
+          }}
+        >
           <Pressable
             style={{ flexDirection: "row", alignItems: "center" }}
-            onPress={() => setIsModalVisible(true)}>
+            onPress={() => setIsModalVisible(true)}
+          >
             <Entypo name="circle-with-plus" size={24} color={colors.border} />
-            <Text style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}>Add a card</Text>
+            <Text
+              style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}
+            >
+              Add a card
+            </Text>
           </Pressable>
           <Link href="/cards" asChild>
-            <Pressable
-              style={{ flexDirection: "row", alignItems: "center" }}
-            >
+            <Pressable style={{ flexDirection: "row", alignItems: "center" }}>
               <Ionicons name="card" size={24} color={colors.border} />
-              <Text style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}>Browse Cards</Text>
+              <Text
+                style={{ color: colors.text, marginLeft: 5, fontWeight: "700" }}
+              >
+                Browse Cards
+              </Text>
             </Pressable>
           </Link>
         </View>
@@ -39,3 +50,4 @@ export default function MainScreen() {
     </LinearGradientView>
   );
 }
+
