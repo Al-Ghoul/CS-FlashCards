@@ -133,7 +133,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                     if (!!res.data().count) {
                       alert({
                         preset: "error",
-                        message: `${data.name} already exists`,
+                        message: "Topic already exists",
                       });
                     } else {
                       const randomUUID = Crypto.randomUUID();
@@ -142,7 +142,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                         .set({ ...data, id: randomUUID })
                         .then(() => {
                           alert({
-                            message: `${data.name} was added successfully!`,
+                            message: "Topic was added successfully!",
                           });
                         })
                         .catch((e) =>
@@ -291,6 +291,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                 disabled={isAddingTopicTranslation}
                 onPress={handleTopicTranslationSubmit((data) => {
                   setIsAddingTopicTranslation(true);
+                  const randomUUID = Crypto.randomUUID();
                   const topicTranslationsCollection =
                     firestore().collection("topic_translations");
                   topicTranslationsCollection
@@ -301,19 +302,23 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                       if (!!res.data().count) {
                         alert({
                           preset: "error",
-                          message: `${data.name} already exists!`,
+                          message: "Topic's translation already exists!",
                         });
                       } else {
                         topicTranslationsCollection
                           .doc()
                           .set({
+                            id: randomUUID,
                             ...data,
-                            mainTopicId: selectedTopic?.id,
+                            TopicId: selectedTopic?.id,
                             languageId: selectedLanguage?.id,
                           })
                           .then(() => {
                             setIsAddingTopic(false);
-                            alert({preset:"done", message: `${data.name} was added successfully`});
+                            alert({
+                              message:
+                                "Topic's Translation was added successfully",
+                            });
                           })
                           .catch((e) =>
                             Alert.alert(

@@ -4,7 +4,7 @@ import { Alert } from "react-native";
 
 
 export const Languages = atom({
-  key: "Languages",
+  key: "LanguagesState",
   default: [] as Array<SelectableItem>,
   effects: [
     ({ setSelf }) => {
@@ -25,6 +25,6 @@ export const Languages = atom({
 
 
 export const LanguageFilter = atom({
-  key: 'LanguageFilter',
+  key: "LanguageFilterState",
   default: undefined as unknown as SelectableItem,
 });
