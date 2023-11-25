@@ -94,7 +94,7 @@ CARD {
 	boolean public
 	string userId
 	string languageId
-	array<string> mainTopicIds
+	array~string~ mainTopicIds
 	DateTime createdAt
 }
 
