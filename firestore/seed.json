@@ -1,16 +1,4 @@
 {
-  "languages": {
-    "lbfxsr0Ipty0jwPzagTu": {
-      "code": "en",
-      "fullName": "English",
-      "id": "lbfxsr0Ipty0jwPzagTu"
-    },
-    "mNK6WG4OQFXw0FFvS67Q": {
-      "code": "ar",
-      "fullName": "العربية",
-      "id": "mNK6WG4OQFXw0FFvS67Q"
-    }
-  },
   "topics": {
     "62b60d91-a47a-4c2c-8d0e-f386a511160d": {
       "id": "62b60d91-a47a-4c2c-8d0e-f386a511160d",

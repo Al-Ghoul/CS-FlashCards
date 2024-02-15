@@ -1,7 +1,7 @@
 import { atom } from "recoil";
-import firestore from "@react-native-firebase/firestore";
 import { Alert } from "react-native";
 import auth from "@react-native-firebase/auth";
+import { db } from "@/utils/firebase.app";
 
 export const KnownCards = atom({
   key: "KnownCardsState",
@@ -9,9 +9,9 @@ export const KnownCards = atom({
   effects: [
     ({ setSelf }) => {
       const currentUser = auth().currentUser;
-      const subscriber = firestore()
+      const subscriber = db
         .collection("known_cards")
-      .where("userId", "==", currentUser?.uid)
+        .where("userId", "==", currentUser?.uid)
         .onSnapshot((knownCards) =>
           setSelf(
             knownCards.docs.map(
@@ -27,7 +27,7 @@ export const KnownCards = atom({
                 );
               },
             ),
-          ),
+          )
         );
 
       return () => subscriber();
