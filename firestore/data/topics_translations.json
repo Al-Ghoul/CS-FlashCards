@@ -1,0 +1,54 @@
+{
+  "topic_translations": {
+    "THjMt3KuyHimsiyZV5i7": {
+      "topicId": "hpGMUamJp2IVya3XcWM1",
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "name": "Array"
+    },
+    "WFW6ziS9rFgov40T04NB": {
+      "topicId": "ilyCUMD2H4buTiLzBP6U",
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "name": "Software Engineering Principles"
+    },
+    "aUiwJBsffBHh0G0KI50M": {
+      "topicId": "hpGMUamJp2IVya3XcWM1",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "name": "مجموعة"
+    },
+    "fOmPQ3XIi2EAkS8DCiqs": {
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "name": "Learning",
+      "topicId": "H8R91DjPEipObCjp9wKl"
+    },
+    "lXpbej5u24muqCrILtHw": {
+      "topicId": "czXiHAqudEepr39TlEDx",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "name": "هيكلة البيانات"
+    },
+    "mA1vwyIHKgy0vlMFwEHW": {
+      "topicId": "JcLoZAwPyF3cnrMjdQ3b",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "name": "التعلم الفائق"
+    },
+    "mtUxFfKKj5dfW0bJjlBe": {
+      "topicId": "czXiHAqudEepr39TlEDx",
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "name": "Data Structures"
+    },
+    "n5l8zIlJ6QX3dWwGdGFT": {
+      "topicId": "H8R91DjPEipObCjp9wKl",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "name": "التعلم"
+    },
+    "uMIVuWq7479GQfRwhn9T": {
+      "languageId": "lbfxsr0Ipty0jwPzagTu",
+      "name": "Ultra Learning",
+      "topicId": "JcLoZAwPyF3cnrMjdQ3b"
+    },
+    "yoXrd7kQBYSsK47xib6D": {
+      "topicId": "ilyCUMD2H4buTiLzBP6U",
+      "languageId": "mNK6WG4OQFXw0FFvS67Q",
+      "name": "مبادئ هندسة البرمجيات"
+    }
+  }
+}

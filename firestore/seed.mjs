@@ -12,6 +12,8 @@ const pickedSeed = await rawlist({
   message: "Select a seed",
   choices: [
     { name: "Languages", value: "languages" },
+    { name: "Topics", value: "topics" },
+    { name: "Topics Translations", value: "topics_translations" },
   ],
 });
 const firestore = isDevEnv
