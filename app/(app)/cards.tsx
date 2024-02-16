@@ -39,7 +39,6 @@ import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 export default function Cards() {
   const { colors } = useTheme();
-  const cardsCollectionRef = useRef(db.collection("cards"));
   const [lastDocument, setLastDocument] = useState<
     FirebaseFirestoreTypes.DocumentData
   >();
@@ -88,36 +87,38 @@ export default function Cards() {
       return;
     }
 
+    const cardsCollection = db.collection("cards");
     setIsLoading(true);
     let query = isPublic
-      ? cardsCollectionRef.current
-        .where("languageId", "==", selectedLanguage.id)
-        .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
-        .where("public", "==", isPublic)
-        .orderBy("createdAt")
-      : cardsCollectionRef.current
-        .where("languageId", "==", selectedLanguage.id)
-        .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
-        .where("userId", "==", currentUser?.uid)
-        .orderBy("createdAt");
-    if (lastDocument !== undefined) query = query.endBefore(lastDocument);
+      ? cardsCollection
+        .where("public", "==", true)
+      : cardsCollection
+        .where("userId", "==", currentUser?.uid);
+
+    query = query
+      .orderBy("createdAt", "asc")
+      .where("languageId", "==", selectedLanguage.id)
+      .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics);
+
+    if (lastDocument !== undefined) query = query.startAfter(lastDocument);
 
     let temporaryList: Array<CardType> = [];
     query
-      .limitToLast(QueryLimit)
+      .limit(QueryLimit)
       .get()
       .then((querySnapshot) => {
-        setLastDocument(querySnapshot.docs[0]);
+        setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
         querySnapshot.docs.forEach(
           (card) => {
+            console.log(new Date(card.data().createdAt._seconds * 1000));
             if (
-              cardsData.some((data: CardType) => data.id == card.data().id) ===
+              cardsData.some((data: CardType) => data.id == card.id) ===
                 true
             ) {
               setMaxReached(true);
               return;
             }
-            temporaryList.push(card.data() as CardType);
+            temporaryList.push({ ...card.data() as CardType, id: card.id });
           },
           (e) => {
             Alert.alert(
@@ -133,7 +134,6 @@ export default function Cards() {
         }
 
         if (temporaryList.length) {
-          temporaryList.reverse();
           if (changedFlag.current === true) {
             changedFlag.current = false;
             setCardsData(temporaryList);
