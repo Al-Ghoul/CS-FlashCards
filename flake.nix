@@ -72,7 +72,7 @@
                   abiVersion = "x86";
                   systemImageType = "google_apis_playstore";
                   # Resolution could be anything you want, keep the others if your Hardware supports KVM (for better performance)
-                  androidEmulatorFlags = "-skin 720x1280 -accel on -gpu host -qemu -enable-kvm";
+                  androidEmulatorFlags = "-skin 480x800 -accel on -gpu host -qemu -enable-kvm";
                 };
               };
 
