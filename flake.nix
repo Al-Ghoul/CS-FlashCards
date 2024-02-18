@@ -54,6 +54,8 @@
                 nodePackages.eas-cli # Expo's EAS Update CLI
                 yarn
                 cz-cli
+                firebase-tools
+                nodePackages.dotenv-cli
               ];
 
               env = rec {
@@ -70,7 +72,7 @@
                   abiVersion = "x86";
                   systemImageType = "google_apis_playstore";
                   # Resolution could be anything you want, keep the others if your Hardware supports KVM (for better performance)
-                  androidEmulatorFlags = "-skin 720x1280 -accel on -gpu host -qemu -enable-kvm";
+                  androidEmulatorFlags = "-skin 480x800 -accel on -gpu host -qemu -enable-kvm";
                 };
               };
 
@@ -99,7 +101,7 @@
           ];
         };
 
-      /*   gradle8 = with pkgs; stdenv.mkDerivation rec {
+      /*      gradle8 = with pkgs; stdenv.mkDerivation rec {
       pname = "gradle";
       version = "8.0.1";
       nativeVersion = "0.22-milestone-24";
@@ -167,13 +169,13 @@
           mainProgram = "gradle";
         };
       };
-       */
+       
       hydraJobs = rec {
 
         # NOTE: building on nix does NOT work, it needs a writable FHS
         # FIX:Unable to initialize metrics, ensure /var/empty/.android is writable, details: /var/empty/.android/analytics.settings (No such file or directory)
 
-        /*     pre-build = with pkgs; mkYarnPackage rec {
+        pre-build = with pkgs; mkYarnPackage rec {
       name = "CS-FlashCards-PreBuild";
       src = self;
       version = (builtins.fromJSON (builtins.readFile ./package.json)).version;
@@ -190,7 +192,7 @@
 
       offlineCache = fetchYarnDeps {
         inherit yarnLock;
-        hash = "sha256-POH80VjGMdRBcwItsc9932RS8KNrZJhawvIhSYgllBo=";
+        hash = "sha256-Q8z0cy3bjVzsYUOJEHPnOpzPrCkGCYrKB+Cn/9mMu28=";
       }; 
 
       configurePhase = ''
@@ -274,8 +276,9 @@
        fullName = "Build-Storage";
            };
            memSize = 2 * 1024;
-         })); */
+           QEMU_OPTS = "-netdev user,id=net0 -device virtio-net-pci,netdev=net0";
+         }));  
 
-      };
+      };*/
     };
 }

@@ -107,3 +107,5 @@ buck-out/
 
 # @end expo-cli
 result
+profile.log
+*debug.log

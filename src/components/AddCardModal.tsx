@@ -1,6 +1,6 @@
-import { Modal, View, Text, Pressable, TextInput, Alert } from "react-native";
+import { Alert, Modal, Pressable, Text, TextInput, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CardInputSchema, CardInputSchemaType } from "@/utils/validators";
 import {
@@ -14,12 +14,11 @@ import { LanguageFilter } from "@/atoms/Languages";
 import { useState } from "react";
 import { MaterialCommunityIcons, MaterialIcons } from "@expo/vector-icons";
 import AddTopicModal from "./AddTopicModal";
-import firestore from "@react-native-firebase/firestore";
-import * as Crypto from "expo-crypto";
 import auth from "@react-native-firebase/auth";
 import { LanguageDropDown } from "./LanguageDropDown";
 import { TranslatedTopicsDropDown } from "./TranslatedTopicsDropDown";
 import { alert } from "@baronha/ting";
+import { db } from "@/utils/firebase.app";
 
 export default function AddCardModal({ isVisible, onClose }: Props) {
   const { colors } = useTheme();
@@ -41,8 +40,9 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
     setIsModalVisible(false);
   };
 
-  const [selectedTranslatedTopics, setSelectedTranslatedTopics] =
-    useState<Array<string>>();
+  const [selectedTranslatedTopics, setSelectedTranslatedTopics] = useState<
+    Array<string>
+  >();
 
   return (
     <>
@@ -206,25 +206,31 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                     return;
                   }
                   setIsAddingCard(true);
-                  const cardsCollection = firestore().collection("cards");
+                  const cardsCollection = db.collection("cards");
                   cardsCollection
                     .where("cover", "==", data.cover)
                     .count()
                     .get()
                     .then((res) => {
-                      if (!!res.data().count) {
+                      if (res.data().count) {
                         alert({
                           preset: "error",
                           message: "Card already exists!",
                         });
                       } else {
-                        const randomUUID = Crypto.randomUUID();
+                        if (!selectedTranslatedTopics.length) {
+                          alert({
+                            preset: "error",
+                            message: "No topic was selected",
+                          });
+                          return;
+                        }
+
                         cardsCollection
                           .doc()
                           .set({
-                            id: randomUUID,
                             ...data,
-                            public: !!data.public,
+                            public: data.public,
                             userId: currentUser?.uid,
                             languageId: selectedLanguage?.id,
                             mainTopicIds: selectedTranslatedTopics,
@@ -239,7 +245,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                             Alert.alert(
                               "Error/AddCard",
                               `There was an error adding card ${e}`,
-                            ),
+                            )
                           );
                       }
                     })
@@ -247,7 +253,7 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
                       Alert.alert(
                         "Error/CardsCount",
                         `There was an error counting cards ${e}`,
-                      ),
+                      )
                     )
                     .finally(() => setIsAddingCard(false));
                 })}
@@ -262,14 +268,16 @@ export default function AddCardModal({ isVisible, onClose }: Props) {
               >
                 Submit
               </Button>
-              {isAddingCard === true ? (
-                <ActivityIndicator
-                  size={"small"}
-                  animating={true}
-                  color={"white"}
-                  style={{ position: "absolute", left: 140, top: 15 }}
-                />
-              ) : null}
+              {isAddingCard === true
+                ? (
+                  <ActivityIndicator
+                    size={"small"}
+                    animating={true}
+                    color={"white"}
+                    style={{ position: "absolute", left: 140, top: 15 }}
+                  />
+                )
+                : null}
             </View>
           </View>
           <View style={{ height: "35%", gap: 10 }}>
@@ -308,4 +316,3 @@ type Props = {
   isVisible: boolean;
   onClose: () => void;
 };
-

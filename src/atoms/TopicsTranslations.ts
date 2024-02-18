@@ -1,24 +1,24 @@
 import { atom, selector } from "recoil";
-import firestore from "@react-native-firebase/firestore";
 import { LanguageFilter, Languages } from "./Languages";
 import { Alert } from "react-native";
+import { db } from "@/utils/firebase.app";
 
 export const TranslatedTopics = atom({
   key: "TranslatedTopicsState",
   default: [] as Array<SelectableTranslatedTopic>,
   effects: [
     ({ setSelf }) => {
-      const subscriber = firestore()
+      const subscriber = db
         .collection("topic_translations")
         .onSnapshot((topics) =>
           setSelf(
             topics.docs.map(
               (topic) => {
-                const { id, name, languageId, topicId } = topic.data();
+                const { name, languageId, topicId } = topic.data();
                 return {
                   label: name,
                   value: topicId,
-                  id,
+                  id: topic.id,
                   languageId,
                 };
               },
@@ -30,7 +30,7 @@ export const TranslatedTopics = atom({
                 );
               },
             ),
-          ),
+          )
         );
 
       return () => subscriber();
@@ -51,4 +51,3 @@ export const FilteredTranslatedTopics = selector({
     return topics.filter((topic) => topic.languageId === selectedLanguage?.id);
   },
 });
-

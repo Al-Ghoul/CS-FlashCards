@@ -15,14 +15,15 @@ export const TranslatedTopicsDropDown = ({
 }) => {
   const [isPickerOpen, setIsPickerOpen] = useState(false);
   const translatedTopics = useRecoilValue(FilteredTranslatedTopics);
-  const [selectedTranslatedTopics, setSelectedTranslatedTopics] =
-    useState(currentValue);
-
+  const [selectedTranslatedTopics, setSelectedTranslatedTopics] = useState(
+    currentValue,
+  );
   DropDownPicker.setMode("BADGE");
 
   useEffect(() => {
-    if (typeof setValueFN === "function")
+    if (typeof setValueFN === "function") {
       setValueFN(selectedTranslatedTopics || []);
+    }
   }, [selectedTranslatedTopics]);
 
   return (
@@ -33,11 +34,10 @@ export const TranslatedTopicsDropDown = ({
       open={isPickerOpen}
       setOpen={setIsPickerOpen}
       items={translatedTopics}
-      // @ts-ignore
+      // @ts-ignore types don't match partially
       value={selectedTranslatedTopics}
       setValue={setSelectedTranslatedTopics}
       style={style}
-      dropDownDirection="TOP"
     />
   );
 };

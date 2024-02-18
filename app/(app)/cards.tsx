@@ -1,53 +1,56 @@
 import LinearGradientView from "@/components/LinearGradientView";
 import { useEffect, useRef, useState } from "react";
 import {
-  View,
-  Text,
-  FlatList,
   Alert,
   Dimensions,
-  Pressable,
+  FlatList,
   Modal,
+  Pressable,
   StyleProp,
+  Text,
+  View,
   ViewStyle,
 } from "react-native";
-import firestore from "@react-native-firebase/firestore";
 import { useTheme } from "@react-navigation/native";
 import { ActivityIndicator, Button, Checkbox } from "react-native-paper";
 import { useRecoilValue } from "recoil";
 import { LanguageFilter } from "@/atoms/Languages";
 import {
-  Feather,
   AntDesign,
-  MaterialIcons,
+  Feather,
   Fontisto,
+  MaterialIcons,
 } from "@expo/vector-icons";
 import auth from "@react-native-firebase/auth";
 import Animated, {
-  useAnimatedStyle,
-  useSharedValue,
-  withTiming,
   Extrapolation,
   interpolate,
   runOnJS,
+  useAnimatedStyle,
+  useSharedValue,
+  withTiming,
 } from "react-native-reanimated";
 import { LanguageDropDown } from "@/components/LanguageDropDown";
 import { TranslatedTopicsDropDown } from "@/components/TranslatedTopicsDropDown";
 import { alert } from "@baronha/ting";
 import { KnownCards } from "@/atoms/KnownCards";
+import { db } from "@/utils/firebase.app";
+import { FirebaseFirestoreTypes } from "@react-native-firebase/firestore";
 
 export default function Cards() {
   const { colors } = useTheme();
-  const cardsCollectionRef = useRef(firestore().collection("cards"));
-  const [lastDocument, setLastDocument] = useState<any>();
+  const [lastDocument, setLastDocument] = useState<
+    FirebaseFirestoreTypes.DocumentData
+  >();
   const [isLoading, setIsLoading] = useState(false);
   const [maxReached, setMaxReached] = useState(false);
   const [cardsData, setCardsData] = useState<Array<CardType>>([]);
   const windowHeight = Dimensions.get("window").height;
   const listRef = useRef<FlatList>(null);
   const QueryLimit = Math.floor(parseInt((windowHeight / 70).toFixed()) * 0.75);
-  const [selectedTranslatedTopics, setSelectedTranslatedTopics] =
-    useState<Array<string>>();
+  const [selectedTranslatedTopics, setSelectedTranslatedTopics] = useState<
+    Array<string>
+  >();
   const selectedLanguage = useRecoilValue(LanguageFilter);
   const userKnownCards = useRecoilValue(KnownCards);
   const [isPublic, setIsPublic] = useState(false);
@@ -80,42 +83,44 @@ export default function Cards() {
       isLoading === true ||
       !selectedTranslatedTopics?.length ||
       !selectedLanguage
-    )
+    ) {
       return;
+    }
 
+    const cardsCollection = db.collection("cards");
     setIsLoading(true);
     let query = isPublic
-      ? cardsCollectionRef.current
-          .where("languageId", "==", selectedLanguage.id)
-          .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
-          .where("public", "==", isPublic)
-          .orderBy("createdAt")
-      : cardsCollectionRef.current
-          .where("languageId", "==", selectedLanguage.id)
-          .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics)
-          .where("userId", "==", currentUser?.uid)
-          .orderBy("createdAt");
-    if (lastDocument !== undefined) query = query.endBefore(lastDocument);
+      ? cardsCollection
+        .where("public", "==", true)
+      : cardsCollection
+        .where("userId", "==", currentUser?.uid);
+
+    query = query
+      .orderBy("createdAt", "asc")
+      .where("languageId", "==", selectedLanguage.id)
+      .where("mainTopicIds", "array-contains-any", selectedTranslatedTopics);
+
+    if (lastDocument !== undefined) query = query.startAfter(lastDocument);
 
     let temporaryList: Array<CardType> = [];
     query
-      .limitToLast(QueryLimit)
+      .limit(QueryLimit)
       .get()
       .then((querySnapshot) => {
-        setLastDocument(querySnapshot.docs[0]);
+        setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
         querySnapshot.docs.forEach(
           (card) => {
+            console.log(new Date(card.data().createdAt._seconds * 1000));
             if (
-              cardsData.some((data: CardType) => data.id == card.data().id) ===
-              true
+              cardsData.some((data: CardType) => data.id == card.id) ===
+                true
             ) {
               setMaxReached(true);
               return;
             }
-            temporaryList.push(card.data() as CardType);
+            temporaryList.push({ ...card.data() as CardType, id: card.id });
           },
-          (e: any) => {
-            console.log(e);
+          (e) => {
             Alert.alert(
               `Error/FetchCards", "An error occurred fetching cards. ${e}`,
             );
@@ -129,12 +134,12 @@ export default function Cards() {
         }
 
         if (temporaryList.length) {
-          temporaryList.reverse();
           if (changedFlag.current === true) {
             changedFlag.current = false;
             setCardsData(temporaryList);
-          } else
+          } else {
             setCardsData((currentList) => [...currentList, ...temporaryList]);
+          }
         }
 
         listRef.current?.scrollToEnd();
@@ -174,114 +179,124 @@ export default function Cards() {
             <Feather name="arrow-down-circle" size={40} color={colors.text} />
           </Pressable>
         </Animated.View>
-        {isSettingsShown ? (
-          <>
-            <View style={{ marginTop: 20, gap: 20 }}>
-              <LanguageDropDown />
-              <TranslatedTopicsDropDown
-                currentValue={selectedTranslatedTopics}
-                setValueFN={setSelectedTranslatedTopics}
-              />
-            </View>
-            <View
-              style={{
-                flexDirection: "row",
-                alignItems: "center",
-                alignSelf: "center",
-              }}
-            >
-              <Checkbox
-                status={isPublic ? "checked" : "unchecked"}
-                onPress={() => {
-                  setIsPublic(!isPublic);
-                }}
-                color={colors.card}
-              />
-              <Text
-                style={{ color: colors.text, fontSize: 20, fontWeight: "bold" }}
-              >
-                Public?
-              </Text>
-            </View>
-
-            <Button
-              style={{
-                backgroundColor: colors.primary,
-                width: "50%",
-                alignSelf: "center",
-                borderWidth: 1,
-                borderColor: colors.border,
-              }}
-              textColor={colors.text}
-              onPress={() => {
-                setIsSettingsShown(!isSettingsShown);
-                offset.value = withTiming(offset.value == 0 ? -180 : 0, {
-                  duration: 500,
-                });
-                setMaxReached(false);
-                setLastDocument(undefined);
-                changedFlag.current = true;
-                handleDataFetch();
-              }}
-            >
-              Save
-            </Button>
-          </>
-        ) : null}
-
-        {isLoading ? (
-          <ActivityIndicator
-            size="small"
-            style={{ marginVertical: 20 }}
-            color={colors.text}
-          />
-        ) : null}
-        {!cardsData.length && !isLoading ? (
-          <Text
-            style={{
-              alignSelf: "center",
-              color: colors.text,
-              marginTop: 30,
-              fontWeight: "bold",
-            }}
-          >
-            No Cards were found with this setting.
-          </Text>
-        ) : (
-          <FlatList
-            contentContainerStyle={{ gap: 15, marginTop: 30 }}
-            data={cardsData}
-            ref={listRef}
-            renderItem={({
-              item,
-              index,
-            }: {
-              item: CardType;
-              index: number;
-            }) => (
-              <Pressable
-                style={{ alignItems: "center" }}
-                onPress={() => {
-                  setCardIndex(index);
-                  setIsModalVisible(true);
+        {isSettingsShown
+          ? (
+            <>
+              <View style={{ marginTop: 20, gap: 20 }}>
+                <LanguageDropDown />
+                <TranslatedTopicsDropDown
+                  currentValue={selectedTranslatedTopics}
+                  setValueFN={setSelectedTranslatedTopics}
+                />
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  alignSelf: "center",
                 }}
               >
+                <Checkbox
+                  status={isPublic ? "checked" : "unchecked"}
+                  onPress={() => {
+                    setIsPublic(!isPublic);
+                  }}
+                  color={colors.card}
+                />
                 <Text
                   style={{
-                    fontSize: 18,
-                    fontWeight: "bold",
                     color: colors.text,
+                    fontSize: 20,
+                    fontWeight: "bold",
                   }}
                 >
-                  {item.cover}
+                  Public?
                 </Text>
-              </Pressable>
-            )}
-            keyExtractor={(item) => item.id}
-            onEndReached={handleDataFetch}
-            removeClippedSubviews
-          />
-        )}
+              </View>
+
+              <Button
+                style={{
+                  backgroundColor: colors.primary,
+                  width: "50%",
+                  alignSelf: "center",
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                }}
+                textColor={colors.text}
+                onPress={() => {
+                  setIsSettingsShown(!isSettingsShown);
+                  offset.value = withTiming(offset.value == 0 ? -180 : 0, {
+                    duration: 500,
+                  });
+                  setMaxReached(false);
+                  setLastDocument(undefined);
+                  changedFlag.current = true;
+                  handleDataFetch();
+                }}
+              >
+                Save
+              </Button>
+            </>
+          )
+          : null}
+
+        {isLoading
+          ? (
+            <ActivityIndicator
+              size="small"
+              style={{ marginVertical: 20 }}
+              color={colors.text}
+            />
+          )
+          : null}
+        {!cardsData.length && !isLoading
+          ? (
+            <Text
+              style={{
+                alignSelf: "center",
+                color: colors.text,
+                marginTop: 30,
+                fontWeight: "bold",
+              }}
+            >
+              No Cards were found with this setting.
+            </Text>
+          )
+          : (
+            <FlatList
+              contentContainerStyle={{ gap: 15, marginTop: 30 }}
+              data={cardsData}
+              ref={listRef}
+              renderItem={({
+                item,
+                index,
+              }: {
+                item: CardType;
+                index: number;
+              }) => (
+                <Pressable
+                  style={{ alignItems: "center" }}
+                  onPress={() => {
+                    setCardIndex(index);
+                    setIsModalVisible(true);
+                  }}
+                >
+                  <Text
+                    style={{
+                      fontSize: 18,
+                      fontWeight: "bold",
+                      color: colors.text,
+                    }}
+                  >
+                    {item.cover}
+                  </Text>
+                </Pressable>
+              )}
+              keyExtractor={(item) => item.id}
+              onEndReached={handleDataFetch}
+              removeClippedSubviews
+            />
+          )}
         <CardsModal
           isVisible={isModalVisible}
           onClose={onModalClose}
@@ -441,35 +456,39 @@ const FlashCard = ({
   return (
     <View style={{ flex: 1, justifyContent: "center" }}>
       <Animated.View style={[style, flippingStyle]}>
-        {!isHidden ? (
-          !isFlipped ? (
-            <Text
-              style={{
-                alignSelf: "center",
-                color: colors.text,
-                fontWeight: "600",
-                fontSize: 25,
-                margin: 3,
-                padding: 5,
-              }}
-            >
-              {card.cover}
-            </Text>
-          ) : (
-            <Animated.ScrollView style={[contentStyle]}>
-              <Text
-                style={{
-                  color: colors.text,
-                  margin: 3,
-                  padding: 5,
-                  textAlign: "center",
-                }}
-              >
-                {card.content}
-              </Text>
-            </Animated.ScrollView>
+        {!isHidden
+          ? (
+            !isFlipped
+              ? (
+                <Text
+                  style={{
+                    alignSelf: "center",
+                    color: colors.text,
+                    fontWeight: "600",
+                    fontSize: 25,
+                    margin: 3,
+                    padding: 5,
+                  }}
+                >
+                  {card.cover}
+                </Text>
+              )
+              : (
+                <Animated.ScrollView style={[contentStyle]}>
+                  <Text
+                    style={{
+                      color: colors.text,
+                      margin: 3,
+                      padding: 5,
+                      textAlign: "center",
+                    }}
+                  >
+                    {card.content}
+                  </Text>
+                </Animated.ScrollView>
+              )
           )
-        ) : null}
+          : null}
       </Animated.View>
       <Pressable
         onPress={handlePress}
@@ -485,14 +504,14 @@ const FlashCard = ({
         buttonColor={colors.primary}
         onPress={async () => {
           setIsAdding(true);
-          const knownCardsCollection = firestore().collection("known_cards");
+          const knownCardsCollection = db.collection("known_cards");
           const currentUser = auth().currentUser;
           const cardsCount = await knownCardsCollection
             .where("userId", "==", currentUser?.uid)
             .where("cardId", "==", card.id)
             .countFromServer()
             .get();
-          if (!!cardsCount.data().count) {
+          if (cardsCount.data().count) {
             alert({
               preset: "error",
               message: "Card already exists in your known list",
@@ -516,4 +535,3 @@ const FlashCard = ({
     </View>
   );
 };
-

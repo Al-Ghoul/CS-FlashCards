@@ -1,6 +1,6 @@
-import { Modal, View, Text, Pressable, TextInput, Alert } from "react-native";
+import { Alert, Modal, Pressable, Text, TextInput, View } from "react-native";
 import { useTheme } from "@react-navigation/native";
-import { useForm, Controller } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   MainTopicInputSchema,
@@ -12,12 +12,11 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { LanguageFilter, Languages } from "@/atoms/Languages";
 import { Picker } from "@react-native-picker/picker";
 import { useEffect, useState } from "react";
-import { Entypo, AntDesign, MaterialIcons } from "@expo/vector-icons";
+import { AntDesign, Entypo, MaterialIcons } from "@expo/vector-icons";
 import { Topics } from "@/atoms/Topics";
-import * as Crypto from "expo-crypto";
-import firestore from "@react-native-firebase/firestore";
 import { ActivityIndicator } from "react-native-paper";
 import { alert } from "@baronha/ting";
+import { db } from "@/utils/firebase.app";
 
 export default function AddTopicModal({ isVisible, onClose }: Props) {
   const { colors } = useTheme();
@@ -37,12 +36,14 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
   } = useForm<MainTopicTranslationInputSchemaType>({
     resolver: zodResolver(MainTopicTranslationInputSchema),
   });
-  const [selectedLanguage, setSelectedLanguage] =
-    useRecoilState(LanguageFilter);
+  const [selectedLanguage, setSelectedLanguage] = useRecoilState(
+    LanguageFilter,
+  );
   const [selectedTopic, setSelectedTopic] = useState<SelectableItem>(topics[0]);
   const [isAddingTopic, setIsAddingTopic] = useState(false);
-  const [isAddingTopicTranslation, setIsAddingTopicTranslation] =
-    useState(false);
+  const [isAddingTopicTranslation, setIsAddingTopicTranslation] = useState(
+    false,
+  );
 
   useEffect(() => {
     if (!selectedLanguage) setSelectedLanguage(languages[0]);
@@ -97,6 +98,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
             }}
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
+                autoCapitalize="none"
                 placeholder="Topic Name"
                 onBlur={onBlur}
                 onChangeText={onChange}
@@ -124,22 +126,21 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
               disabled={isAddingTopic}
               onPress={handleTopicSubmit((data) => {
                 setIsAddingTopic(true);
-                const topicsCollection = firestore().collection("topics");
+                const topicsCollection = db.collection("topics");
                 topicsCollection
                   .where("name", "==", data.name)
                   .count()
                   .get()
                   .then((res) => {
-                    if (!!res.data().count) {
+                    if (res.data().count) {
                       alert({
                         preset: "error",
                         message: "Topic already exists",
                       });
                     } else {
-                      const randomUUID = Crypto.randomUUID();
                       topicsCollection
                         .doc()
-                        .set({ ...data, id: randomUUID })
+                        .set({ ...data })
                         .then(() => {
                           alert({
                             message: "Topic was added successfully!",
@@ -149,7 +150,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                           Alert.alert(
                             "Error/AddTopic",
                             `There was an error adding topic ${e}`,
-                          ),
+                          )
                         );
                     }
                   })
@@ -157,7 +158,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                     Alert.alert(
                       "Error/TopicsCount",
                       `There was an error counting topics ${e}`,
-                    ),
+                    )
                   )
                   .finally(() => setIsAddingTopic(false));
               })}
@@ -172,14 +173,16 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
             >
               Add Topic
             </Button>
-            {isAddingTopic === true ? (
-              <ActivityIndicator
-                size={"small"}
-                animating={true}
-                color={"white"}
-                style={{ position: "absolute", left: 140, top: 15 }}
-              />
-            ) : null}
+            {isAddingTopic === true
+              ? (
+                <ActivityIndicator
+                  size={"small"}
+                  animating={true}
+                  color={"white"}
+                  style={{ position: "absolute", left: 140, top: 15 }}
+                />
+              )
+              : null}
           </View>
           <View
             style={{
@@ -291,26 +294,33 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                 disabled={isAddingTopicTranslation}
                 onPress={handleTopicTranslationSubmit((data) => {
                   setIsAddingTopicTranslation(true);
-                  const randomUUID = Crypto.randomUUID();
-                  const topicTranslationsCollection =
-                    firestore().collection("topic_translations");
+                  const topicTranslationsCollection = db.collection(
+                    "topic_translations",
+                  );
                   topicTranslationsCollection
                     .where("name", "==", data.name)
                     .count()
                     .get()
                     .then((res) => {
-                      if (!!res.data().count) {
+                      if (res.data().count) {
                         alert({
                           preset: "error",
                           message: "Topic's translation already exists!",
                         });
                       } else {
+                        if (!selectedLanguage || !selectedTopic) {
+                          alert({
+                            preset: "error",
+                            message: "Language or topic wasn't selected",
+                          });
+                          return;
+                        }
+
                         topicTranslationsCollection
                           .doc()
                           .set({
-                            id: randomUUID,
                             ...data,
-                            TopicId: selectedTopic?.id,
+                            topicId: selectedTopic?.id,
                             languageId: selectedLanguage?.id,
                           })
                           .then(() => {
@@ -324,7 +334,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                             Alert.alert(
                               "Error/AddTopicTranslation",
                               `There was an error adding topic translation ${e}`,
-                            ),
+                            )
                           );
                       }
                     })
@@ -332,7 +342,7 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
                       Alert.alert(
                         "Error/TopicsTranslationsCount",
                         `There was an error counting topics translations ${e}`,
-                      ),
+                      )
                     )
                     .finally(() => setIsAddingTopicTranslation(false));
                 })}
@@ -347,14 +357,16 @@ export default function AddTopicModal({ isVisible, onClose }: Props) {
               >
                 Add Topic Translation
               </Button>
-              {isAddingTopicTranslation === true ? (
-                <ActivityIndicator
-                  size={"small"}
-                  animating={true}
-                  color={"white"}
-                  style={{ position: "absolute", left: 110, top: 15 }}
-                />
-              ) : null}
+              {isAddingTopicTranslation === true
+                ? (
+                  <ActivityIndicator
+                    size={"small"}
+                    animating={true}
+                    color={"white"}
+                    style={{ position: "absolute", left: 110, top: 15 }}
+                  />
+                )
+                : null}
             </View>
           </View>
         </View>
@@ -367,4 +379,3 @@ type Props = {
   isVisible: boolean;
   onClose: () => void;
 };
-
