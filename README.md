@@ -1,16 +1,34 @@
 # CS - FlashCards - Intro
 
-This application was inspired by [computer-science-flash-cards
-](https://github.com/jwasham/computer-science-flash-cards) by jwasham, you can refer to his article [Retaining Computer Science Knowledge
-](https://startupnextdoor.com/retaining-computer-science-knowledge/) for more information, for an Arabic version of it, I'll be creating one on my blog.
+This application was inspired by
+[computer-science-flash-cards](https://github.com/jwasham/computer-science-flash-cards)
+by jwasham, you can refer to his article
+[Retaining Computer Science Knowledge](https://startupnextdoor.com/retaining-computer-science-knowledge/)
+for more information, for an Arabic version of it, I'll be creating one on my
+blog.
 
-This app is built with [React-Native](https://reactnative.dev/docs/environment-setup), [Expo](https://docs.expo.dev/get-started/installation/) and [Firebase](https://firebase.google.com/) as a back-end service.
+This app is built with
+[React-Native](https://reactnative.dev/docs/environment-setup),
+[Expo](https://docs.expo.dev/get-started/installation/) and
+[Firebase](https://firebase.google.com/) as a back-end service.
+
+## Preview
+
+<div style="display: flex;flex-direction: row;gap: 3px;">
+
+![A Preview GIF showing some theme toggling and app sign in](./preview/preview01.gif)
+
+![A Preview GIF showing some random cards populated in the app](./preview/preview02.gif)
+
+</div>
 
 ## Running the app
 
-You have two options (assuming you have expo, react native and the required tools) :
+You have two options (assuming you have expo, react native and the required
+tools) :
 
-1. Expo's prebuild flow, to run the app (after you clone this repo) You can run one of the following commands:
+1. Expo's prebuild flow, to run the app (after you clone this repo) You can run
+   one of the following commands:
 
 ```sh
 # Build Android native prebuild
@@ -30,9 +48,11 @@ npx expo run:android
 npx expo run:ios
 ```
 
-Consult expo's [Prebuild](https://docs.expo.dev/workflow/prebuild/) docs for more information.
+Consult expo's [Prebuild](https://docs.expo.dev/workflow/prebuild/) docs for
+more information.
 
-2. Expo's EAS build, which builds the app on expo's managed hosts (it can actually build both IOS and Android apps):
+2. Expo's EAS build, which builds the app on expo's managed hosts (it can
+   actually build both IOS and Android apps):
 
 for a specific platform you can run
 
@@ -51,18 +71,26 @@ or for all platforms
 eas build --platform all
 ```
 
-Consult expo's [EAS Build](https://docs.expo.dev/build/introduction/) docs for more information.
+Consult expo's [EAS Build](https://docs.expo.dev/build/introduction/) docs for
+more information.
 
 ## Seeding the firestore database
 
-[Firestore-backup-restore](https://github.com/dalenguyen/firestore-backup-restore) is used here to seed the database with languages which are REQUIRED, the rest of the data could be added from the app itself, you'll need a `serviceAccountKey.json` that contains the private key and gives you access to the database outside of your app, however you should NOT share this file under any circumstances, leaking this file might result in unauthorized access to your firestore database, hence your data.
+[Firestore-backup-restore](https://github.com/dalenguyen/firestore-backup-restore)
+is used here to seed the database with languages which are REQUIRED, the rest of
+the data could be added from the app itself, you'll need a
+`serviceAccountKey.json` that contains the private key and gives you access to
+the database outside of your app, however you should NOT share this file under
+any circumstances, leaking this file might result in unauthorized access to your
+firestore database, hence your data.
 
 ```sh
 # Install firestore-export-import as a dev dependency
 npm install -D firestore-export-import
 ```
 
-You can simply run (assuming you have a shell already pointing to the project's directory):
+You can simply run (assuming you have a shell already pointing to the project's
+directory):
 
 ```sh
 cd firestore
@@ -70,13 +98,15 @@ cd firestore
 node seed.ts
 ```
 
-for more details refer to [Firestore-backup-restore](https://github.com/dalenguyen/firestore-backup-restore).
+for more details refer to
+[Firestore-backup-restore](https://github.com/dalenguyen/firestore-backup-restore).
 
 ---
 
 ## Database tables
 
-Actually, here, they are called collections, since we are using firestore and it is a NoSQL kind of db; However this is the underlying structure:
+Actually, here, they are called collections, since we are using firestore and it
+is a NoSQL kind of db; However this is the underlying structure:
 
 ```mermaid
 erDiagram
@@ -88,43 +118,43 @@ MAIN-TOPIC ||--o{ TOPIC-TRANSLATION : has
 USER ||--o{ KNOWN-CARD : has
 
 CARD {
-	string id
-	string cover
-	string content
-	boolean public
-	string userId
-	string languageId
-	array~string~ mainTopicIds
-	DateTime createdAt
+ string id
+ string cover
+ string content
+ boolean public
+ string userId
+ string languageId
+ array~string~ mainTopicIds
+ DateTime createdAt
 }
 
 USER {
-	string id
+ string id
 }
 
 LANGUAGE {
-	string id
-	string code
-	string fullName
+ string id
+ string code
+ string fullName
 }
 
 MAIN-TOPIC {
-	string id
-	string name
+ string id
+ string name
 }
 
 TOPIC-TRANSLATION {
-	string id
-	string name
-	string mainTopicId
-	string languageId
+ string id
+ string name
+ string mainTopicId
+ string languageId
 }
 
 KNOWN-CARD {
-	string userId
-	string cardId
+ string userId
+ string cardId
 }
 ```
 
-User table/collection doesn't really exist nor used, we use firestore's auto-generated User UID.
-
+User table/collection doesn't really exist nor used, we use firestore's
+auto-generated User UID.
