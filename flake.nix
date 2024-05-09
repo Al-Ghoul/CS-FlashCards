@@ -90,7 +90,6 @@
                 denolint.enable = true;
 
                 commitizen.enable = true;
-                markdownlint.enable = true;
               };
 
               scripts.dev.exec = ''
