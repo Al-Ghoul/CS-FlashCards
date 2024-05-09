@@ -359,7 +359,11 @@ function CardsModal({
         <View style={{ flex: 1, flexDirection: "row" }}>
           <Pressable
             onPress={() => {
-              setCardIndex(-(--cardIndex % cards.length));
+              if ((--cardIndex % cards.length) < 0) {
+                setCardIndex(
+                  cards.length - 1,
+                );
+              } else setCardIndex(--cardIndex % cards.length);
             }}
             style={{ alignSelf: "center" }}
           >
