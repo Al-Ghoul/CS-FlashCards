@@ -14,16 +14,9 @@ This app is built with
 
 ## Preview
 
-<table>
-<tr>
-    <td>Signin/Theme Preview</td>
-    <td>Cards/Search Preview</td>
-</tr>
-<tr>
-<td><img alt="A Preview GIF showing some theme toggling and app sign in" width=1206 height=716 src="./preview/preview01.gif"></td>
-<td><img alt="A Preview GIF showing some random cards populated in the app" width=1206 height=716 src="./preview/preview02.gif"></td>
-</tr>
-</table>
+|                                                                                                     |                                                                                                        |
+| :-------------------------------------------------------------------------------------------------: | :----------------------------------------------------------------------------------------------------: |
+| <img alt="A Preview GIF showing some theme toggling and app sign in" src="./preview/preview01.gif"> | <img alt="A Preview GIF showing some random cards populated in the app" src="./preview/preview02.gif"> |
 
 ## Running the app
 
