@@ -14,13 +14,16 @@ This app is built with
 
 ## Preview
 
-<div style="display: flex;flex-direction: row;gap: 3px;">
-
-![A Preview GIF showing some theme toggling and app sign in](./preview/preview01.gif)
-
-![A Preview GIF showing some random cards populated in the app](./preview/preview02.gif)
-
-</div>
+<table>
+<tr>
+    <td>Signin/Theme Preview</td>
+    <td>Cards/Search Preview</td>
+</tr>
+<tr>
+<td><img alt="A Preview GIF showing some theme toggling and app sign in" width=1206 height=716 src="./preview/preview01.gif"></td>
+<td><img alt="A Preview GIF showing some random cards populated in the app" width=1206 height=716 src="./preview/preview02.gif"></td>
+</tr>
+</table>
 
 ## Running the app
 
