@@ -15,6 +15,7 @@ const pickedSeed = await rawlist({
     { name: "Topics", value: "topics" },
     { name: "Topics Translations", value: "topics_translations" },
     { name: "Cards", value: "cards" },
+    { name: "All", value: "all" },
   ],
 });
 const firestore = isDevEnv
@@ -26,6 +27,15 @@ const firestore = isDevEnv
   })
   : initializeFirebaseApp(serviceAccount.default);
 
-restore(firestore, `firestore/data/${pickedSeed}.json`, {
-  autoParseDates: true,
-});
+if (pickedSeed == "all") {
+  const choices = ["languages", "topics", "topics_translations", "cards"];
+  for (const choice of choices) {
+    restore(firestore, `firestore/data/${choice}.json`, {
+      autoParseDates: true,
+    });
+  }
+} else {
+  restore(firestore, `firestore/data/${pickedSeed}.json`, {
+    autoParseDates: true,
+  });
+}
