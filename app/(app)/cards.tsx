@@ -110,7 +110,6 @@ export default function Cards() {
         setLastDocument(querySnapshot.docs[querySnapshot.docs.length - 1]);
         querySnapshot.docs.forEach(
           (card) => {
-            console.log(new Date(card.data().createdAt._seconds * 1000));
             if (
               cardsData.some((data: CardType) => data.id == card.id) ===
                 true
@@ -363,7 +362,7 @@ function CardsModal({
                 setCardIndex(
                   cards.length - 1,
                 );
-              } else setCardIndex(--cardIndex % cards.length);
+              } else setCardIndex(cardIndex % cards.length);
             }}
             style={{ alignSelf: "center" }}
           >
