@@ -1,9 +1,12 @@
-import Animated, { runOnJS, useSharedValue, withTiming } from 'react-native-reanimated';
-import { useEffect, useState } from 'react';
+import Animated, {
+  runOnJS,
+  useSharedValue,
+  withTiming,
+} from "react-native-reanimated";
+import { useEffect, useState } from "react";
 import * as SplashScreen from "expo-splash-screen";
-import { StyleSheet } from 'react-native';
-import Constants from 'expo-constants';
-
+import { StyleSheet } from "react-native";
+import Constants from "expo-constants";
 
 export default function AnimatedSplashScreen({ children }: Props) {
   const fadeValue = useSharedValue(1);
@@ -20,10 +23,10 @@ export default function AnimatedSplashScreen({ children }: Props) {
   return (
     <>
       {children}
-      {!isSplashAnimationComplete &&
-        (
+      {!isSplashAnimationComplete
+        ? (
           <Animated.View
-            pointerEvents={'none'}
+            pointerEvents={"none"}
             style={[
               StyleSheet.absoluteFill,
               {
@@ -36,23 +39,24 @@ export default function AnimatedSplashScreen({ children }: Props) {
               style={{
                 width: "100%",
                 height: "100%",
-                resizeMode: Constants.expoConfig?.splash?.resizeMode || "contain",
+                resizeMode: Constants.expoConfig?.splash?.resizeMode ||
+                  "contain",
                 transform: [
                   {
                     scale: fadeValue,
                   },
                 ],
-              }} source={require("@/assets/splash/splash.png")}
+              }}
+              source={require("@/assets/splash/splash.png")}
               fadeDuration={0}
-            >
-            </Animated.Image>
+            />
           </Animated.View>
         )
-      }
+        : null}
     </>
   );
 }
 
 type Props = {
-  children: React.ReactNode
-}
+  children: React.ReactNode;
+};
