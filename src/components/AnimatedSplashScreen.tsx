@@ -23,10 +23,9 @@ export default function AnimatedSplashScreen({ children }: Props) {
   return (
     <>
       {children}
-      {!isSplashAnimationComplete
+      {isSplashAnimationComplete == false
         ? (
           <Animated.View
-            pointerEvents={"none"}
             style={[
               StyleSheet.absoluteFill,
               {
@@ -48,7 +47,6 @@ export default function AnimatedSplashScreen({ children }: Props) {
                 ],
               }}
               source={require("@/assets/splash/splash.png")}
-              fadeDuration={0}
             />
           </Animated.View>
         )
